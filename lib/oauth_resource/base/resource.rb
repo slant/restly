@@ -60,6 +60,10 @@ module OauthResource
           end
         end
 
+        def error
+          connection.error
+        end
+
         private
 
         #############################################
@@ -68,6 +72,7 @@ module OauthResource
 
         # Build an instance object from response objects
         def instance_for_response(response, opts={})
+          return OauthResource::Base::Error::Instance.new( self, response.parsed ) if error
           opts = { parsed: true }.merge(opts)
           response = response.parsed.fetch(resource_name, {}) if opts[:parsed]
           "#{self.class}::Instance".constantize.new self, response

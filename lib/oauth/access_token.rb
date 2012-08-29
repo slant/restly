@@ -12,32 +12,35 @@ module OAuth2
       }
     end
 
-    alias_method :old_get, :get
-
-    def get(path, opts={}, &block)
-      key = [[token, path, opts, block.to_s].join('')].pack('m')
-      self.error = nil
-
-      if token.present? && cache_opts.present?
-        val = Rails.cache.fetch key, cache_opts do
-          old_get(path, opts, &block)
-        end
-        Rails.cache.delete(key) if error
-        val
-      else
-        old_get(path, opts, &block)
-      end
-
-    end
-
     alias_method :old_request, :request
 
     def request(verb, path, opts={}, &block)
-      begin
-        old_request(verb, path, opts, &block)
-      rescue OAuth2::Error => error
-        self.error = error.response
+      if cache_opts.present? && !opts[:force]
+        cached_request(verb, path, opts, &block)
+      else
+        begin
+          old_request(verb, path, opts, &block)
+        rescue OAuth2::Error => error
+          self.error = error.response
+        end
       end
+    end
+
+    def cached_request(verb, path, opts={}, &block)
+      key = [path, [Marshal.dump({verb: verb, token: token, opts: opts, block: block })].pack('m')].compact.join('_')
+
+      # Set the response
+      cache_opts[:force] = true unless [:get, :options].include?(verb)
+      response = Rails.cache.fetch key, cache_opts do
+        Rails.cache.delete_matched("#{path}*") if ![:get, :options].include?(verb)
+        opts.merge!({force: true})
+        request(verb, path, opts, &block)
+      end
+
+      Rails.cache.delete(key) if error
+
+      response
+
     end
 
   end

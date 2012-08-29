@@ -6,6 +6,7 @@ module OauthResource
     autoload :ObjectMethods
     autoload :Instance
     autoload :Collection
+    autoload :Error
 
     include Resource
 

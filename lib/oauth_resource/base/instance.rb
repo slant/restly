@@ -1,7 +1,5 @@
 class OauthResource::Base::Instance
 
-  attr_accessor :attributes
-
   def initialize(resource, response)
     self.extend OauthResource::Base::ObjectMethods
     @_attributes_ = response || {}
@@ -16,6 +14,11 @@ class OauthResource::Base::Instance
   def save
     resource.connection.put([resource.path, id].join('/'), body: @_attributes_)
     self
+  end
+
+  def delete
+    response = resource.connection.delete([resource.path, id].join('/'))
+    response.status == 200 ? true : false
   end
 
   def error
