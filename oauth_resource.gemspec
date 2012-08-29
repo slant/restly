@@ -8,9 +8,9 @@ Gem::Specification.new do |gem|
   gem.version       = OauthResource::VERSION
   gem.authors       = ["Jason Waldrip"]
   gem.email         = ["jason@waldrip.net"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{ Allows your app to authenticate a resource with oauth}
+  gem.summary       = %q{ Allows your app to authenticate a resource with oauth}
+  gem.homepage      = "http://github.com/jwaldrip/oauth_resource"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
