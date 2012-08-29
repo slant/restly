@@ -1,3 +1,3 @@
 module OauthResource
-  VERSION = "pre"
+  VERSION = "0.0.2"
 end
