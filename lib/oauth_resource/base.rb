@@ -9,6 +9,7 @@ module OauthResource
     autoload :Error
 
     include Resource
+    include Relationships
 
   end
 end

@@ -7,9 +7,16 @@ module OauthResource::Base::Resource::ClassMethods
   # Authorize and New should be the same thing
   alias_method :authorize, :new
 
+  # Delegate the new method to an authorized resource
+  def new
+    self.authorize.new
+  end
+
   # Defines the resource client
   def client
-    OAuth2::Client.new(client_id, client_secret, site: site)
+    connection_opts ||= {}
+    connection_opts[:headers] = { :'Accept' => "application/#{format}" }
+    OAuth2::Client.new(client_id, client_secret, site: site, connection_opts: connection_opts)
   end
 
   # Override Default Values
@@ -43,6 +50,12 @@ module OauthResource::Base::Resource::ClassMethods
     end
   end
 
+  def format=(value)
+    define_singleton_method :format do
+      value
+    end
+  end
+
   def cache(opts={})
     define_method :cache_opts do
       opts
@@ -52,7 +65,11 @@ module OauthResource::Base::Resource::ClassMethods
   # Default Values
 
   def resource_name
-    name.parameterize
+    name.gsub(/.*::/,'').underscore
+  end
+
+  def format
+    OauthResource::Configuration.default_format
   end
 
   def path
@@ -73,6 +90,10 @@ module OauthResource::Base::Resource::ClassMethods
 
   private
 
+  def path_with_format
+    [path,format.to_s].compact.join('.')
+  end
+
   ############################################################
   ## Defines ::Instance and ::Collection in subclasses
   ############################################################
@@ -85,39 +106,12 @@ module OauthResource::Base::Resource::ClassMethods
   end
 
   ############################################################
-  ### Resource Relationships
-  ############################################################
-
-  def belongs_to_resource(resource, opts={})
-    "#{name}::Instance".constantize.send :define_method, resource do
-      model = resource.to_s.camelize.constantize
-      model.authorize( self.resource.connection, path: opts[:path] ).find(send(:"#{resource}_id"))
-    end
-  end
-
-  def has_one_resource(resource, opts={})
-    "#{name}::Instance".send :define_method, resource do
-      model = resource.to_s.camelize.constantize
-      path = opts[:absolute_path] ? opts[:path] : [self.resource.path, id, (opts[:path] || resource.to_s) ].join('/')
-      model.authorize( self.resource.connection, path: path ).all.first
-    end
-  end
-
-  def has_many_resources(resources, opts={})
-    "#{name}::Instance".send :define_method, resources do
-      model = resources.to_s.singularize.camelize.constantize
-      path = opts[:absolute_path] ? opts[:path] : [self.resource.path, id, (opts[:path] || resources.to_s) ].join('/')
-      model.authorize( self.resource.connection, path: path ).all
-    end
-  end
-
-  ############################################################
   ## Handle Un-Authorized Instances
   ############################################################
 
   def method_missing(m, *args, &block)
-    if self.new.respond_to?(m)
-      self.new.send(m, *args, &block)
+    if self.authorize.respond_to?(m)
+      self.authorize.send(m, *args, &block)
     else
       super
     end

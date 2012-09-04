@@ -21,7 +21,7 @@ module OauthResource
           self.extend OauthResource::Base::ObjectMethods
           self.connection = token_object || OAuth2::AccessToken.new(self.class.client, nil)
           self.resource_name = opts[:resource_name] || self.class.resource_name
-          self.path = opts[:path] || self.class.path
+          @path = opts[:path] || self.class.path
           connection.cache_opts = cache_opts if self.respond_to?(:cache_opts)
         end
 
@@ -38,7 +38,7 @@ module OauthResource
         # GET /:path/:id
         # Fetches A Remote Resource
         def find(id)
-          instance_for_response connection.get( [path, id].join('/'), params: params)
+          instance_for_response connection.get( path(id), params: params)
         end
 
         # POST /:path
@@ -55,13 +55,22 @@ module OauthResource
 
         # Initializes a resource locally when the spec is known.
         def new
-          spec.attributes.each do |k|
-            self.send("#{k}=", nil)
+          if spec
+            spec.attributes.each do |k|
+              self.send("#{k}=", nil)
+            end
+          else
+            instance_for_response({}, parsed: false, error: false)
           end
         end
 
         def error
           connection.error
+        end
+
+        def path(*args)
+          full_path = ([@path] + args).join('/')
+          [full_path, self.class.format].compact.join('.')
         end
 
         private
@@ -72,8 +81,8 @@ module OauthResource
 
         # Build an instance object from response objects
         def instance_for_response(response, opts={})
-          return OauthResource::Base::Error::Instance.new( self, response.parsed ) if error
-          opts = { parsed: true }.merge(opts)
+          opts = { parsed: true, error: true }.merge(opts)
+          return OauthResource::Base::Error::Instance.new( self, response.parsed ) if error && opts[:error]
           response = response.parsed.fetch(resource_name, {}) if opts[:parsed]
           "#{self.class}::Instance".constantize.new self, response
         end

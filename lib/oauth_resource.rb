@@ -1,4 +1,5 @@
 require "oauth_resource/version"
+require "oauth2"
 require 'oauth/access_token'
 
 module OauthResource
@@ -7,5 +8,6 @@ module OauthResource
   autoload :Base
   autoload :Configuration
   autoload :ControllerMethods
+  autoload :Relationships
 
 end

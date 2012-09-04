@@ -1,7 +1,7 @@
 module OauthResource::Configuration
 
   def self.config
-    YAML.load_file(File.join(Rails.root, 'config', 'endpoints.yml'))[Rails.env]
+    YAML.load_file(File.join(Rails.root, 'config', 'oauth_resource.yml'))[Rails.env]
   end
 
   def self.method_missing(m, *args, &block)
