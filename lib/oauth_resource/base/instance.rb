@@ -25,10 +25,6 @@ class OauthResource::Base::Instance
     resource.connection.error
   end
 
-  def inspect
-    to_s.sub />$/, " #{@_attributes_.except(:resource).to_s}>"
-  end
-
   def as_json(*args)
     super(except: :resource)
   end

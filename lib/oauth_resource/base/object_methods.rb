@@ -23,6 +23,10 @@ module OauthResource::Base::ObjectMethods
       end
     end
 
+    def inspect
+      to_s.sub />$/, " #{@_attributes_.except(:resource).to_s}>"
+    end
+
   end
 
 end

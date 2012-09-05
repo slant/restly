@@ -9,5 +9,6 @@ module OauthResource
   autoload :Configuration
   autoload :ControllerMethods
   autoload :Relationships
+  autoload :Errors
 
 end

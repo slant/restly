@@ -1,5 +1,6 @@
 module OAuth2
   class AccessToken
+    extend ActiveSupport::Concern
 
     attr_accessor :cache_opts
     attr_accessor :error
@@ -12,17 +13,13 @@ module OAuth2
       }
     end
 
-    alias_method :old_request, :request
+    alias_method :forced_request, :request
 
     def request(verb, path, opts={}, &block)
       if cache_opts.present? && !opts[:force]
         cached_request(verb, path, opts, &block)
       else
-        begin
-          old_request(verb, path, opts, &block)
-        rescue OAuth2::Error => error
-          self.error = error.response
-        end
+        forced_request(verb, path, opts, &block)
       end
     end
 
@@ -40,6 +37,15 @@ module OAuth2
       Rails.cache.delete(key) if error
 
       response
+
+    end
+
+    class << self
+
+      def from_headers(client, headers)
+        token = headers['authorization'].try(:gsub, /Bearer (.*)/, "\\1")
+        from_hash(client, { access_token: token })
+      end
 
     end
 

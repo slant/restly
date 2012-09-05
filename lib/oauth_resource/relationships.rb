@@ -3,6 +3,7 @@ module OauthResource::Relationships
   extend ActiveSupport::Autoload
 
   autoload :ClassMethods
+  autoload :Builder
 
   included do
 
