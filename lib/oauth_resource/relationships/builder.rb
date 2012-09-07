@@ -30,7 +30,7 @@ module OauthResource::Relationships::Builder
   end
 
   def rel_path(*args)
-    respond_to?(:path) ? path : ([self.class.underscore.pluralize] + args).join('/')
+    respond_to?(:path) ? path : ([self.class.name.underscore.pluralize] + args).join('/')
   end
 
 end

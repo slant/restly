@@ -1,4 +1,4 @@
-class OauthResource::Base::Instance
+class OauthResource::Base::Instance < Object
 
   def initialize(resource, response)
     self.extend OauthResource::Base::ObjectMethods
@@ -26,7 +26,7 @@ class OauthResource::Base::Instance
   end
 
   def as_json(*args)
-    super(except: :resource)
+    { self.resource.resource_name.to_sym => @_attributes_.as_json(except: :resource) }
   end
 
 end

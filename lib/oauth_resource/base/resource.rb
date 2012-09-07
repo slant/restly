@@ -8,8 +8,15 @@ module OauthResource
 
       included do
 
+        rattr_accessor :site, :path, :resource_name, :client_id, :client_secret, :format, :instance_json_root, :collection_json_root
         attr_accessor :params
-        cache (OauthResource::Configuration.cache_opts || {}) if OauthResource::Configuration.cache
+
+        self.format = OauthResource::Configuration.default_format
+        self.site = OauthResource::Configuration.site
+        self.client_id = OauthResource::Configuration.client_id
+        self.client_secret = OauthResource::Configuration.client_secret
+        self.instance_json_root = true
+        self.collection_json_root = true
 
       end
 
@@ -73,6 +80,11 @@ module OauthResource
           [full_path, self.class.format].compact.join('.')
         end
 
+        def add_params(hash)
+          self.params ||= {}
+          self.params.merge!(hash)
+        end
+
         private
 
         #############################################
@@ -81,16 +93,19 @@ module OauthResource
 
         # Build an instance object from response objects
         def instance_for_response(response, opts={})
-          opts = { parsed: true, error: true }.merge(opts)
+          opts.reverse_merge!({ parsed: true, error: true , json_root: self.class.instance_json_root })
           return OauthResource::Base::Error::Instance.new( self, response.parsed ) if error && opts[:error]
-          response = response.parsed.fetch(resource_name, {}) if opts[:parsed]
+          response = response.parsed if opts[:parsed]
+          response = response.fetch(resource_name, {}) if opts[:json_root]
           "#{self.class}::Instance".constantize.new self, response
         end
 
         def collection_for_response(response, opts={})
-          response = response.parsed
-          response[resource_name.to_s.pluralize] = response.fetch(resource_name.to_s.pluralize,[]).collect do |i|
-            instance_for_response( i, parsed: false )
+          opts.reverse_merge!({ parsed: true, error: true , json_root: self.class.collection_json_root })
+          response = response.parsed if opts[:parsed]
+          response = response.fetch(resource_name.to_s.pluralize, {}) if opts[:json_root]
+          response = response.collect do |i|
+            instance_for_response( i, parsed: false, json_root: true )
           end
           "#{self.class}::Collection".constantize.new self, response
         end

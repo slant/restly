@@ -19,73 +19,10 @@ module OauthResource::Base::Resource::ClassMethods
     OAuth2::Client.new(client_id, client_secret, site: site, connection_opts: connection_opts)
   end
 
-  # Override Default Values
-  def site=(value)
-    define_singleton_method :site do
-      value
-    end
-  end
-
-  def path=(value)
-    define_singleton_method :path do
-      value
-    end
-  end
-
-  def resource_name=(value)
-    define_singleton_method :resource_name do
-      value
-    end
-  end
-
-  def client_id=(value)
-    define_singleton_method :client_id do
-      value
-    end
-  end
-
-  def client_secret=(value)
-    define_singleton_method :client_secret do
-      value
-    end
-  end
-
-  def format=(value)
-    define_singleton_method :format do
-      value
-    end
-  end
-
   def cache(opts={})
     define_method :cache_opts do
       opts
     end
-  end
-
-  # Default Values
-
-  def resource_name
-    name.gsub(/.*::/,'').underscore
-  end
-
-  def format
-    OauthResource::Configuration.default_format
-  end
-
-  def path
-    resource_name.pluralize
-  end
-
-  def site
-    OauthResource::Configuration.site
-  end
-
-  def client_id
-    OauthResource::Configuration.client_id
-  end
-
-  def client_secret
-    OauthResource::Configuration.client_secret
   end
 
   private
@@ -94,11 +31,40 @@ module OauthResource::Base::Resource::ClassMethods
     [path,format.to_s].compact.join('.')
   end
 
+  def rattr_accessor(*attrs)
+    attrs.each do |attr|
+
+      # Setter
+      define_singleton_method :"#{attr}=" do |value|
+
+        # Getter
+        define_singleton_method attr do
+          value
+        end
+
+      end
+
+      # Nil
+      define_singleton_method attr do
+        nil
+      end
+
+    end
+  end
+
   ############################################################
   ## Defines ::Instance and ::Collection in subclasses
   ############################################################
 
   def inherited(subclass)
+
+    # Set Default Cache
+    cache (OauthResource::Configuration.cache_opts || {}) if OauthResource::Configuration.cache
+
+    # Set Default Configuration
+    subclass.resource_name = subclass.name.gsub(/.*::/,'').underscore
+    subclass.path = subclass.resource_name.pluralize
+
     subclass.send :class_eval, %{
       class Instance < OauthResource::Base::Instance ; end
       class Collection < OauthResource::Base::Collection ; end

@@ -24,12 +24,12 @@ module OAuth2
     end
 
     def cached_request(verb, path, opts={}, &block)
-      key = [path, [Marshal.dump({verb: verb, token: token, opts: opts, block: block })].pack('m')].compact.join('_')
+      key = [path.parameterize, Digest::MD5.hexdigest([Marshal.dump({verb: verb, token: token, opts: opts, block: block })].pack('m'))].compact.join('_')
 
       # Set the response
       cache_opts[:force] = true unless [:get, :options].include?(verb)
       response = Rails.cache.fetch key, cache_opts do
-        Rails.cache.delete_matched("#{path}*") if ![:get, :options].include?(verb)
+        Rails.cache.delete_matched("#{path.parameterize}*") if ![:get, :options].include?(verb)
         opts.merge!({force: true})
         request(verb, path, opts, &block)
       end

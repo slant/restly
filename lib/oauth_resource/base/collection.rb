@@ -1,8 +1,10 @@
-class OauthResource::Base::Collection
+require 'will_paginate/array'
+
+class OauthResource::Base::Collection < Array
 
   def initialize( resource, response )
     self.extend OauthResource::Base::ObjectMethods
-    @_attributes_ = response || {}
+    super(response || [])
     self.resource = resource
   end
 
