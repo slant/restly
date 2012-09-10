@@ -1,3 +1,4 @@
+require "includes/class"
 require "oauth_resource/version"
 require "oauth2"
 require 'oauth/access_token'
@@ -9,6 +10,6 @@ module OauthResource
   autoload :Configuration
   autoload :ControllerMethods
   autoload :Relationships
-  autoload :Errors
+  autoload :Error
 
 end

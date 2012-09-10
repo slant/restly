@@ -15,8 +15,8 @@ module OauthResource::Base::Resource::ClassMethods
   # Defines the resource client
   def client
     connection_opts ||= {}
-    connection_opts[:headers] = { :'Accept' => "application/#{format}" }
-    OAuth2::Client.new(client_id, client_secret, site: site, connection_opts: connection_opts)
+    connection_opts[:headers] = { :'Accept' => "application/#{api_format}" }
+    OAuth2::Client.new(client_id, client_secret, site: site, connection_opts: connection_opts, raise_errors: false)
   end
 
   def cache(opts={})
@@ -28,28 +28,7 @@ module OauthResource::Base::Resource::ClassMethods
   private
 
   def path_with_format
-    [path,format.to_s].compact.join('.')
-  end
-
-  def rattr_accessor(*attrs)
-    attrs.each do |attr|
-
-      # Setter
-      define_singleton_method :"#{attr}=" do |value|
-
-        # Getter
-        define_singleton_method attr do
-          value
-        end
-
-      end
-
-      # Nil
-      define_singleton_method attr do
-        nil
-      end
-
-    end
+    [path,api_format.to_s].compact.join('.')
   end
 
   ############################################################

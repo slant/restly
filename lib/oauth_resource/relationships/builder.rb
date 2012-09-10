@@ -22,7 +22,7 @@ module OauthResource::Relationships::Builder
     if opts[:authorize] && (self.resource.connection rescue false)
       model.authorize( resource.connection, path: opts[:path] )
     elsif opts[:authorize]
-      raise OauthResource::Errors::NotAnOauthResource
+      raise OauthResource::Error::NotAnOauthResource, "#{self.class.name} is not an oauth resource!"
     else
       model.authorize( nil, path: opts[:path] )
     end
