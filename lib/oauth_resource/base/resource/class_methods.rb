@@ -62,4 +62,16 @@ module OauthResource::Base::Resource::ClassMethods
     end
   end
 
+  def respond_to?(symbol, include_private=false)
+    begin
+      send(symbol)
+    rescue NameError
+      false
+    rescue NoMethodError
+      false
+    ensure
+      true
+    end
+  end
+
 end

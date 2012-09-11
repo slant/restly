@@ -6,6 +6,10 @@ module OauthResource::Relationships
 
   included do ; end
 
+  def resource_name
+    self.class.resource_name
+  end
+
   module ClassMethods
 
     def belongs_to_resource(relationship, opts={})
@@ -32,12 +36,10 @@ module OauthResource::Relationships
           joiner = send(opts[:through])
           relationship = relationship.to_s.singularize.to_sym
           resource_klass = self.build(relationship, opts)
-          OauthResource::Base::Collection.new(resource_klass, joiner.collect(&relationship)).with_joiner!(joiner)
+          OauthResource::Base::Collection.with_joiner(resource_klass, self, joiner)
         else
           resource_klass = self.build(relationship, opts)
           OauthResource::Base::Collection.with_parent(resource_klass, self)
-
-
           opts[:path] ||= rel_path(id, relationship)
           resource_klass = self.build(relationship, opts).with_params!("with_#{resource_name}_id".to_sym => id)
           resource_klass.all.select{ |i| i.send(:"#{resource_name}_id") == id }

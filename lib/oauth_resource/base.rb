@@ -1,17 +1,20 @@
 module OauthResource
   class Base
+    # Autoload
     extend ActiveSupport::Autoload
-    include ActiveModel::Serialization
-
     autoload :Resource
     autoload :Queries
     autoload :Collection
     autoload :Instance
     autoload :Pagination
-
     autoload :ObjectMethods
     autoload :Error
 
+    # Extensions
+    extend ActiveModel::Naming
+    extend ActiveModel::Callbacks
+
+    # Includes
     include Resource
     include Queries
     include Relationships

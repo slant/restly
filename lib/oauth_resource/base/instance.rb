@@ -1,7 +1,9 @@
 class OauthResource::Base::Instance < Object
   include ActiveModel::Serialization
+  include ActiveModel::Conversion
+  extend ActiveModel::Naming
 
-  delegate :resource_name, :connection, to: :resource
+  delegate :model_name, :resource_name, :connection, to: :resource
 
   def initialize(resource, response)
     self.extend OauthResource::Base::ObjectMethods
@@ -15,7 +17,13 @@ class OauthResource::Base::Instance < Object
   end
 
   def save
-    connection.put(resource.path id, body: @_attributes_)
+    @_attributes_.each do |k,v|
+      if v.respond_to?(:save) && v.respond_to?(resource_name.to_sym)
+        v.save
+      end
+    end
+
+    connection.put(resource.path(id), body: @_attributes_)
     self
   end
 
@@ -36,6 +44,10 @@ class OauthResource::Base::Instance < Object
 
   def attributes
     @_attributes_.except(:resource)
+  end
+
+  def persisted?
+    @saved
   end
 
 end

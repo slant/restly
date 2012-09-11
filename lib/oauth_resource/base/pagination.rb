@@ -13,10 +13,10 @@ module OauthResource::Base::Pagination
 
     end
 
-    def paginates?
-      !!self.pagination
-    end
+  end
 
+  def paginates?
+    !!self.class.pagination
   end
 
 end

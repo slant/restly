@@ -16,6 +16,8 @@ module OauthResource
         self.client_id = OauthResource::Configuration.client_id
         self.client_secret = OauthResource::Configuration.client_secret
 
+        define_model_callbacks :create
+
       end
 
         #############################################
@@ -67,7 +69,7 @@ module OauthResource
           response = response.collect do |i|
             instance_for_response( i, parsed: false )
           end
-          "#{self.class}::Collection".constantize.new self, response, opts[:pagination]
+          "#{self.class}::Collection".constantize.new self, response
         end
 
     end

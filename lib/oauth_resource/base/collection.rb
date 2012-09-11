@@ -1,5 +1,9 @@
 class OauthResource::Base::Collection < Array
   include ActiveModel::Serialization
+  extend ActiveSupport::Autoload
+
+  autoload :WithJoiner
+  autoload :WithParent
 
   delegate :find, :create, :new, :build, to: :resource
 
@@ -40,10 +44,10 @@ class OauthResource::Base::Collection < Array
   end
 
   def self.with_joiner(resource, parent, joiner, opts={})
-    collection = self.new resource, joiner.send(resource.resource_name)
-    collection.extend OauthResource::Base::Collection::Proxied
+    collection = self.new resource, joiner.collect(&resource.resource_name.to_sym)
+    collection.extend OauthResource::Base::Collection::WithJoiner
     collection.parent       = parent
-    collection.joiner       = joiner
+    collection.joiner       = joiner.model_name.constantize
     collection.parent_as    = opts[:as]
     collection
   end

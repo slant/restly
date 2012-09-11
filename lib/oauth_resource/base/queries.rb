@@ -6,7 +6,7 @@ module OauthResource::Base::Queries
   # GET's FROM /:path
   # Fetches the index of the remote resource
   def all
-    connection.get(path, params: params)
+    response = connection.get(path, params: params)
     collection_for_response response
   end
 
@@ -22,6 +22,7 @@ module OauthResource::Base::Queries
   # Creates a Remote Resource
   def create(attrs={})
     connection.post(path, body: attrs, params: params)
+    self
   end
 
   # OPTIONS FOR /:path
@@ -31,7 +32,7 @@ module OauthResource::Base::Queries
   end
 
   # Initializes a resource locally when the spec is known.
-  def new
+  def new(attrs={})
     if spec
       spec.attributes.each do |k|
         self.send("#{k}=", nil)
