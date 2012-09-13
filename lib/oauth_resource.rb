@@ -7,6 +7,7 @@ module OauthResource
   extend ActiveSupport::Autoload
 
   autoload :Base
+  autoload :AuthProxy
   autoload :Configuration
   autoload :ControllerMethods
   autoload :Relationships

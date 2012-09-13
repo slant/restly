@@ -9,10 +9,13 @@ module OauthResource::Error
   class WrongResourceType < StandardError
   end
 
-  class InvalidParentAssociation <StandardError
+  class InvalidParentAssociation < StandardError
   end
 
-  class InvalidJoinerAssociation <StandardError
+  class InvalidJoinerAssociation < StandardError
+  end
+
+  class InvalidObject < StandardError
   end
 
 end
