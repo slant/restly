@@ -4,8 +4,13 @@ module OauthResource::Base::GenericMethods
     OauthResource::AuthProxy.new self, token_object
   end
 
-  def path_with_format
-    [path,format].compact.join('.') if path
+  def path_with_format(*args)
+    path = [self.path, args].flatten.compact.join('/')
+    [path, format].compact.join('.') if path
+  end
+
+  def authorized?
+    connection.token.present?
   end
 
 end

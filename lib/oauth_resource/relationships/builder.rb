@@ -19,18 +19,12 @@ module OauthResource::Relationships::Builder
     model = model.constantize
 
     # Auto-authorization, fail with error!
-    if opts[:authorize] && (self.resource.connection rescue false)
-      model.authorize( resource.connection, path: opts[:path] )
-    elsif opts[:authorize]
-      raise OauthResource::Error::NotAnOauthResource, "#{self.class.name} is not an oauth resource!"
+    if self.respond_to?(:authorized?) && self.authorized?
+      model.authorize(connection)
     else
-      model.authorize( nil, path: opts[:path] )
+      model
     end
 
-  end
-
-  def rel_path(*args)
-    respond_to?(:path) ? path : ([self.class.name.underscore.pluralize] + args).join('/')
   end
 
 end

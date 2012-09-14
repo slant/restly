@@ -4,25 +4,32 @@ module OauthResource
     extend ActiveSupport::Autoload
     autoload :Collection
     autoload :Pagination
-    autoload :ResourceActions
-    autoload :InstanceActions
+    autoload :Resource
+    autoload :Instance
     autoload :CollectionActions
     autoload :GenericMethods
 
     # Active Model
     extend  ActiveModel::Naming
-    extend ActiveModel::Callbacks
+    extend  ActiveModel::Callbacks
+    extend  ActiveModel::Translation
     include ActiveModel::Serialization
     include ActiveModel::Conversion
     include ActiveModel::Dirty
+    include ActiveModel::MassAssignmentSecurity
+    include ActiveModel::Observing
+    include ActiveModel::Validations
 
     # Actions
-    extend  OauthResource::Base::ResourceActions
-    include OauthResource::Base::InstanceActions
+    extend  OauthResource::Base::Resource
+    include OauthResource::Base::Instance
     include OauthResource::Base::Pagination
 
+    # Relationships
+    include OauthResource::Relationships
+
     # Delegate the client to the class
-    delegate :client, to: :klass
+    delegate :client, :permitted_attributes, to: :klass
 
     # Set up the Attributes
     class_attribute :client_id,
@@ -33,7 +40,7 @@ module OauthResource
                     :format,
                     :include_root_in_json,
                     :connection,
-                    :permitted_attributes
+                    :_permitted_attributes
 
     # Setup global defaults
     self.client_id            =   OauthResource::Configuration.client_id
@@ -61,8 +68,7 @@ module OauthResource
       def inherited(subclass)
         subclass.resource_name  = subclass.name.gsub(/.*::/,'').underscore
         subclass.path           = subclass.resource_name.pluralize
-        subclass.connection     = OAuth2::AccessToken.new(client, nil)
-        subclass.resource_attr :id # subclass.spec[:attributes]
+        subclass.resource_attr :id
       end
 
       def client
@@ -79,12 +85,24 @@ module OauthResource
         )
       end
 
+      def connection
+        OAuth2::AccessToken.new(client, nil)
+      end
+
       def resource_attr(*attrs)
-        attrs.each do |attr|
-          permitted_attributes ||= []
-          permitted_attributes += attrs
-          define_attribute_methods attrs
+        self._permitted_attributes ||= []
+        attrs.flatten.compact.map(&:to_sym).each do |attr|
+          unless instance_method_already_implemented? attr
+            define_attribute_method attr
+            self._permitted_attributes << attr
+            self._permitted_attributes.uniq!
+          end
         end
+      end
+
+      def permitted_attributes
+        resource_attr spec['attributes']
+        _permitted_attributes
       end
 
       private
