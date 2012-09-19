@@ -7,7 +7,7 @@ module OauthResource::Base::Instance::Actions
   end
 
   def delete
-    connection.delete(path_with_format)
+    connection.delete(path_with_format, params: params)
     false
     freeze
   end
@@ -16,7 +16,7 @@ module OauthResource::Base::Instance::Actions
     if new_record?
       @attributes = self.class.create(attributes).attributes
     else
-      connection.put(path_with_format, body: attributes)
+      connection.put(path_with_format, body: attributes, params: params)
     end
     self
   end

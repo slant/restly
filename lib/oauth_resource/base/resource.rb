@@ -8,7 +8,7 @@ module OauthResource::Base::Resource
   # OPTIONS FOR /:path
   # Fetches the spec of a remote resource
   def spec
-    @spec ||= connection.request(:options, path).parsed || {}
+    connection.request(:options, path, params: params).parsed || {}
   end
 
 end

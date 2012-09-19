@@ -1,8 +1,6 @@
-class OauthResource::AuthProxy < Proxy
+class OauthResource::Proxies::Auth < OauthResource::BaseProxy
 
   attr_accessor :connection
-
-  include OauthResource::ProxyMethods
 
   def initialize(requester, token)
     super(requester)
@@ -19,7 +17,7 @@ class OauthResource::AuthProxy < Proxy
     elsif token_object.is_a?(OAuth2::AccessToken)
       token_object
     else
-      raise InvalidAuthToken, 'Invalid token format!'
+      raise OauthResource::Error::InvalidToken, 'Invalid token format!'
     end
   end
 

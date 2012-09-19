@@ -35,14 +35,16 @@ module OauthResource::Relationships
         if opts[:through]
           joiner = send(opts[:through])
           relationship = relationship.to_s.singularize.to_sym
-          resource_klass = self.build(relationship, opts)
-          OauthResource::Base::Collection.with_joiner(resource_klass, self, joiner)
+          collection = joiner.collect(relationship)
+          collection.extend OauthResource::Base::Collection
+          collection.add_joiner(joiner, parent)
         else
           resource_klass = self.build(relationship, opts)
-          OauthResource::Base::Collection.with_parent(resource_klass, self)
-          resource_klass = self.build(relationship, opts).with_params!("with_#{resource_name}_id".to_sym => id)
-          resource_klass.all.select{ |i| i.send(:"#{resource_name}_id") == id }
+          collection = resource_klass.with_params("with_#{resource_name}_id".to_sym => id).all
+          collection.extend OauthResource::Base::Collection
+          collection.add_parent(parent)
         end
+          collection
       end
     end
 

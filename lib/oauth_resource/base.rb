@@ -6,7 +6,7 @@ module OauthResource
     autoload :Pagination
     autoload :Resource
     autoload :Instance
-    autoload :CollectionActions
+    autoload :Collection
     autoload :GenericMethods
 
     # Active Model
@@ -23,13 +23,12 @@ module OauthResource
     # Actions
     extend  OauthResource::Base::Resource
     include OauthResource::Base::Instance
-    include OauthResource::Base::Pagination
 
     # Relationships
     include OauthResource::Relationships
 
     # Delegate the client to the class
-    delegate :client, :permitted_attributes, to: :klass
+    delegate :client, to: :klass
 
     # Set up the Attributes
     class_attribute :client_id,
@@ -40,7 +39,8 @@ module OauthResource
                     :format,
                     :include_root_in_json,
                     :connection,
-                    :_permitted_attributes
+                    :permitted_attributes,
+                    :params
 
     # Setup global defaults
     self.client_id            =   OauthResource::Configuration.client_id
@@ -48,28 +48,9 @@ module OauthResource
     self.site                 =   OauthResource::Configuration.site
     self.format               =   OauthResource::Configuration.default_format
     self.include_root_in_json =   OauthResource::Configuration.include_root_in_json || false
-
-    private
-
-    def instance
-      self
-    end
-
-    def klass
-      self.class
-    end
+    self.params               =   {}
 
     class << self
-
-      def load(attributes = nil, options = {})
-        self.new(attributes, options.merge({loaded: true}))
-      end
-
-      def inherited(subclass)
-        subclass.resource_name  = subclass.name.gsub(/.*::/,'').underscore
-        subclass.path           = subclass.resource_name.pluralize
-        subclass.resource_attr :id
-      end
 
       def client
         OAuth2::Client.new(
@@ -89,23 +70,27 @@ module OauthResource
         OAuth2::AccessToken.new(client, nil)
       end
 
+      private
+
+      def inherited(subclass)
+        subclass.resource_name  = subclass.name.gsub(/.*::/,'').underscore
+        subclass.path           = subclass.resource_name.pluralize
+      end
+
       def resource_attr(*attrs)
-        self._permitted_attributes ||= []
+        self.permitted_attributes ||= []
         attrs.flatten.compact.map(&:to_sym).each do |attr|
           unless instance_method_already_implemented? attr
             define_attribute_method attr
-            self._permitted_attributes << attr
-            self._permitted_attributes.uniq!
+            self.permitted_attributes << attr
+            self.permitted_attributes.uniq!
           end
         end
       end
 
-      def permitted_attributes
+      def resource_attrs_from_spec!
         resource_attr spec['attributes']
-        _permitted_attributes
       end
-
-      private
 
       def resource
         self

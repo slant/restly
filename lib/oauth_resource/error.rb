@@ -18,4 +18,7 @@ module OauthResource::Error
   class InvalidObject < StandardError
   end
 
+  class InvalidToken < StandardError
+  end
+
 end

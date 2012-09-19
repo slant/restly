@@ -44,14 +44,5 @@ module OAuth2
 
     end
 
-    class << self
-
-      def from_headers(client, headers)
-        token = headers['authorization'].try(:gsub, /Bearer (.*)/, "\\1")
-        from_hash(client, { access_token: token })
-      end
-
-    end
-
   end
 end
