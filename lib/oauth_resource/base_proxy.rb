@@ -20,11 +20,14 @@ class OauthResource::BaseProxy
             :connection,
             :permitted_attributes,
             :params,
+            :parent,
+            :joiner,
             to: :requester
 
   # Initialize the Proxy
   def initialize(requester)
     @requester = requester
+    copy_instance_variables!
     determine_requester!
     clone_missing_methods!
   end
@@ -59,6 +62,12 @@ class OauthResource::BaseProxy
       instance_eval(requester.method(m).source)
     end
 
+  end
+
+  def copy_instance_variables!
+    requester.instance_variables.each do |attr|
+      self.instance_variable_set attr, requester.instance_variable_get(attr)
+    end
   end
 
   def determine_requester!

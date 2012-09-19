@@ -1,7 +1,6 @@
 module OauthResource::Base::Resource::Finders
 
   def find(*args)
-    params ||= {}
     options = args.extract_options!
 
     #params[pagination_options[:params][:page]] = options[:page] if pagination

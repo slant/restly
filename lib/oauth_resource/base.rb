@@ -40,7 +40,9 @@ module OauthResource
                     :include_root_in_json,
                     :connection,
                     :permitted_attributes,
-                    :params
+                    :params,
+                    :parent,
+                    :joiner
 
     # Setup global defaults
     self.client_id            =   OauthResource::Configuration.client_id
