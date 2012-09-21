@@ -1,97 +1,34 @@
-class OauthResource::BaseProxy
-  extend ActiveSupport::Concern
-  extend ActiveSupport::Autoload
-
-  autoload :InstanceClassMethods
-
-  include InstanceClassMethods
-
-  attr_reader :requester
-
-  # Delegate All Class Attributes to the parent
-  delegate  :client,
-            :client_id,
-            :client_secret,
-            :site,
-            :resource_name,
-            :path,
-            :format,
-            :include_root_in_json,
-            :connection,
-            :permitted_attributes,
-            :params,
-            :parent,
-            :joiner,
-            to: :requester
+class OauthResource::BaseProxy < SimpleDelegator
 
   # Initialize the Proxy
   def initialize(requester)
-    @requester = requester
-    copy_instance_variables!
-    determine_requester!
-    clone_missing_methods!
-  end
 
-  private
+    # Dupe the Requester
+    @requester = requester.dup
 
-  # Types
-  def is_resource?
-    requester.is_a?(Class) && (requester.ancestors.collect(&:to_s).include?("OauthResource::Base") || requester.name == "OauthResource::Base")
-  end
+    # Some Key Methods Added to the Duplicated Requester
+    @requester.class_eval %{
 
-  def is_instance?
-    requester.is_a?(OauthResource::Base)
-  end
-
-  def is_proxy?
-    requester.is_a?(OauthResource::BaseProxy)
-  end
-
-  # Clone Missing Methods to Proxy Class!
-  def clone_missing_methods!
-    methods = if is_resource?
-                OauthResource::Base.methods + OauthResource::Base.private_methods
-              elsif is_instance?
-                OauthResource::Base.instance_methods + OauthResource::Base.private_instance_methods
-              elsif is_proxy?
-                OauthResource::BaseProxy.methods + OauthResource::BaseProxy.private_methods + OauthResource::BaseProxy.instance_methods + OauthResource::BaseProxy.private_instance_methods
-              end
-    methods = requester.methods + requester.private_methods - methods - self.methods - self.private_methods
-
-    methods.each do |m|
-      instance_eval(requester.method(m).source)
-    end
-
-  end
-
-  def copy_instance_variables!
-    requester.instance_variables.each do |attr|
-      self.instance_variable_set attr, requester.instance_variable_get(attr)
-    end
-  end
-
-  def determine_requester!
-
-    if is_resource?
-      self.extend(OauthResource::Base::Resource)
-      self.class.send(:define_method, :new) do |*args|
-        requester.new(*args)
+      def inspect
+        super.gsub(/^(#<)?#<[a-z0-9]+:([a-z0-9]+)(>)?/i, '#<#{requester.name}:\\2')
       end
 
-    elsif is_instance?
-      self.extend(OauthResource::Base::Instance)
-      initialize(requester.attributes, requester.init_options)
+      def self.inspect
+        super.gsub(/^#<[a-z0-9]+:.*/i, '#{requester.name}')
+      end
 
-    elsif is_proxy?
-      clone_missing_methods! # Clones the missing methods from the existing proxy!
-      @requester = requester.requester
-      determine_requester!
+      def self.name
+        "#{requester.name}"
+      end
 
-    else
-      raise OauthResource::Error::InvalidObject, 'Object is not oauth_resource'
+    }
 
-    end
+    # Initialize the Delegator
+    super(@requester)
+  end
 
+  def class
+    @requester
   end
 
 end

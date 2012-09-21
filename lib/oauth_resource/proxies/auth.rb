@@ -1,7 +1,5 @@
 class OauthResource::Proxies::Auth < OauthResource::BaseProxy
 
-  attr_accessor :connection
-
   def initialize(requester, token)
     super(requester)
     self.connection = tokenize(token)

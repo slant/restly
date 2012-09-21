@@ -18,7 +18,12 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.add_dependency "oauth2"
   gem.add_dependency "activesupport"
+  gem.add_dependency "activemodel"
   gem.add_dependency "method_source"
   gem.add_dependency "defined"
+
+  gem.add_development_dependency "rspec"
+  gem.add_development_dependency "pry"
+  gem.add_development_dependency "fakeweb"
 
 end
