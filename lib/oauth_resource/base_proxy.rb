@@ -27,6 +27,7 @@ class OauthResource::BaseProxy < SimpleDelegator
     super(@requester)
   end
 
+  # Tell the Proxy its Class!
   def class
     @requester
   end

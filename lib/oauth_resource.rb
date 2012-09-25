@@ -1,7 +1,6 @@
 require "method_source"
 require "oauth_resource/version"
 require "oauth2"
-require 'oauth/access_token'
 
 module OauthResource
   extend ActiveSupport::Autoload
@@ -14,6 +13,7 @@ module OauthResource
   autoload :ControllerMethods
   autoload :Relationships
   autoload :Error
+  autoload :Connection
 
 
 end

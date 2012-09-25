@@ -27,9 +27,6 @@ module OauthResource
     # Relationships
     include OauthResource::Relationships
 
-    # Delegate the client to the class
-    delegate :client, to: :klass
-
     # Set up the Attributes
     class_attribute :client_id,
                     :client_secret,
@@ -41,8 +38,8 @@ module OauthResource
                     :connection,
                     :permitted_attributes,
                     :params,
-                    :parent,
-                    :joiner
+                    :cache,
+                    :cache_options
 
     # Setup global defaults
     self.client_id            =   OauthResource::Configuration.client_id
@@ -59,7 +56,7 @@ module OauthResource
           client_id,
           client_secret,
           site: site,
-          raise_errors: false,
+          raise_errors: true,
           connection_opts: {
             headers: {
               Accept: "application/#{format}"
@@ -69,7 +66,8 @@ module OauthResource
       end
 
       def connection
-        OAuth2::AccessToken.new(client, nil)
+        conn = OauthResource::Connection.new(client, nil)
+        conn.cache_options = cache_options
       end
 
       private

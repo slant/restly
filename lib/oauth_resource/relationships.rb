@@ -32,19 +32,18 @@ module OauthResource::Relationships
       # Define Relationship
       define_method relationship do
         self.extend OauthResource::Relationships::Builder
+        associated_klass = self.build(relationship, opts)
         if opts[:through]
           joiner = send(opts[:through])
           relationship = relationship.to_s.singularize.to_sym
           collection = joiner.collect(relationship)
-          collection.extend OauthResource::Base::Collection
-          collection.add_joiner(joiner, parent)
+          collection = OauthResource::Base::Collection.new associated_klass, collection
+          association_proxy = OauthResource::Proxies::Association.new(collection, parent, joiner)
         else
-          resource_klass = self.build(relationship, opts)
-          collection = resource_klass.with_params("with_#{resource_name}_id".to_sym => id).all
-          collection.extend OauthResource::Base::Collection
-          collection.add_parent(parent)
+          collection = associated_klass.with_params("with_#{resource_name}_id".to_sym => id).all
+          association_proxy = OauthResource::Proxies::Association.new(collection, parent)
         end
-          collection
+        association_proxy
       end
     end
 

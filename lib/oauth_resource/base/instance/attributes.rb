@@ -63,4 +63,19 @@ module OauthResource::Base::Instance::Attributes
     self.attributes = parsed
   end
 
+  def method_missing(m, *args, &block)
+    if !!(/(?<attr>\w+)=$/ =~ m.to_s) && attribute_permitted?(attr) && args.size == 1
+      send("#{attr}_will_change!".to_sym) unless args.first == @attributes[attr.to_sym] || !@loaded
+      @attributes[attr.to_sym] = args.first
+    elsif !!(/(?<attr>\w+)=?$/ =~ m.to_s) && attribute_permitted?(attr)
+      attributes[attr.to_sym]
+    else
+      raise NoMethodError, "undefined method #{m} for #{klass}"
+    end
+  end
+
+  def respond_to_missing?(method_name, include_private = false)
+    !!(/(?<attr>\w+)=?$/ =~ method_name.to_s) && attribute_permitted?(attr)
+  end
+
 end

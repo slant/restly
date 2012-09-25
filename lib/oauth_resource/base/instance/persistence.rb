@@ -14,7 +14,7 @@ module OauthResource::Base::Instance::Persistence
   end
 
   def reload!
-    connection.get
+    self.class.instance_from_response connection.get(path, force: true)
   end
 
 end

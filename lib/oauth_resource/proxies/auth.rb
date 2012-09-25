@@ -3,6 +3,7 @@ class OauthResource::Proxies::Auth < OauthResource::BaseProxy
   def initialize(requester, token)
     super(requester)
     self.connection = tokenize(token)
+    connection.cache_options = requester.cache_options
   end
 
   private

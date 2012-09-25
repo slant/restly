@@ -8,9 +8,10 @@ class OauthResource::Proxies::Association < OauthResource::BaseProxy
     @joiner = joiner
   end
 
-  def << (obj)
-
+  def <<(instance)
+    collection = super
+    joiner.create("#{parent.resource_name}_id" => parent.id, "#{instance.resource_name}_id" => instance.id) if joiner
+    collection
   end
-
 
 end
