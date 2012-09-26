@@ -13,37 +13,52 @@ module OauthResource::Relationships
   module ClassMethods
 
     def belongs_to_resource(relationship, opts={})
-      # Define Relationship
-      define_method relationship do
+
+      define_method relationship do |options|
         self.extend OauthResource::Relationships::Builder
-        self.build(relationship, opts).find(send(:"#{relationship}_id"))
+        combined_opts = opts.merge(options)
+
+        relationship_klass = self.build(relationship, combined_opts)
+        relationship_klass.find(send(:"#{relationship}_id"))
       end
+
     end
 
     def has_one_resource(relationship, opts={})
-      # Define Relationship
-      define_method relationship do
+
+      define_method relationship do |options|
         self.extend OauthResource::Relationships::Builder
-        self.build(relationship, opts).all.first
+        combined_opts = opts.merge(options)
+
+        relationship_klass = self.build(relationship, combined_opts)
+        relationship_klass.all.first
       end
+
     end
 
     def has_many_resources(relationship, opts={})
-      # Define Relationship
-      define_method relationship do
+
+      define_method relationship do |options|
         self.extend OauthResource::Relationships::Builder
-        associated_klass = self.build(relationship, opts)
-        if opts[:through]
+        combined_opts = opts.merge(options)
+        parent = self
+        joiner = nil
+        relationship_klass = self.build(relationship, combined_opts)
+
+        objects_array = if opts[:through]
           joiner = send(opts[:through])
           relationship = relationship.to_s.singularize.to_sym
-          collection = joiner.collect(relationship)
-          collection = OauthResource::Base::Collection.new associated_klass, collection
-          association_proxy = OauthResource::Proxies::Association.new(collection, parent, joiner)
+          joiner.collect { |i| i.relationship(options) }
+
         else
-          collection = associated_klass.with_params("with_#{resource_name}_id".to_sym => id).all
-          association_proxy = OauthResource::Proxies::Association.new(collection, parent)
+          relationship_klass_scoped = relationship_klass.with_params("with_#{resource_name}_id".to_sym => id)
+          relationship_klass_scoped.all
+
         end
-        association_proxy
+
+        collection = OauthResource::Base::Collection.new relationship_klass, objects_array
+        OauthResource::Proxies::Association.new(collection, parent, joiner)
+
       end
     end
 

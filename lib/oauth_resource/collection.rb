@@ -19,6 +19,11 @@ class OauthResource::Collection < Array
     collection
   end
 
+  def <<(instance)
+    raise OauthResource::Error::InvalidObject, "Object is not an instance of #{resource}" unless instance.is_a?(resource)
+    super(instance)
+  end
+
   private
 
   def items_from_response

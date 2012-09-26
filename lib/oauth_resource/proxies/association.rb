@@ -2,15 +2,20 @@ class OauthResource::Proxies::Association < OauthResource::BaseProxy
 
   attr_reader :parent, :joiner
 
-  def initialize(requester, parent, joiner=nil)
-    super(requester)
+  def initialize(receiver, parent, joiner=nil)
+    super(receiver)
     @parent = parent
     @joiner = joiner
   end
 
   def <<(instance)
-    collection = super
-    joiner.create("#{parent.resource_name}_id" => parent.id, "#{instance.resource_name}_id" => instance.id) if joiner
+    collection = receiver << instance
+    instance.save unless instance.persisted
+    if joiner
+      joiner.create("#{parent.resource_name}_id" => parent.id, "#{instance.resource_name}_id" => instance.id)
+    elsif parent
+      instance.update_attributes("#{parent.resource_name}_id" => parent.id)
+    end
     collection
   end
 

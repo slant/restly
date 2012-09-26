@@ -1,7 +1,7 @@
 class OauthResource::Proxies::Params < OauthResource::BaseProxy
 
-  def initialize(requester, params)
-    super(requester)
+  def initialize(receiver, params)
+    super(receiver)
     self.params.merge!(params)
   end
 

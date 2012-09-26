@@ -3,10 +3,10 @@ module OauthResource::Relationships::Builder
   def build(relationship, opts)
 
     # Base Model
-    model = opts[:class_name] || relationship.to_s.camelize
+    model = opts[:class_name] || relationship.to_s.singularize.camelize
 
     # Namespace
-    namespace = opts[:namespace] || self.class.name.gsub(/::\w+(::Instance)?$/, '')
+    namespace = opts[:namespace] || self.class.name.gsub(/::\w+$/, '')
     model = [namespace, model].compact.join('::')
 
     # Polymorphic Relationships

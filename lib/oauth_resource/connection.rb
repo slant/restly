@@ -1,6 +1,34 @@
-class OauthResource::Connection < Oauth2::Access Token
+class OauthResource::Connection < OAuth2::AccessToken
 
   attr_accessor :cache_options
+
+  def self.tokenize(client, object)
+    if object.is_a?(Hash) && object.has_key?(:access_token)
+      OauthResource::Connection.from_hash(client, object)
+
+    elsif object.is_a?(Rack::Request)
+      OauthResource::Connection.from_rack_request(client, object)
+
+    elsif object.is_a?(OAuth2::AccessToken)
+      OauthResource::Connection.from_token_object(client, object)
+
+    else
+      raise OauthResource::Error::InvalidToken, 'Invalid token format!'
+    end
+  end
+
+  def self.from_rack_request(client, rack_request)
+    /(?<token>\w+)$/i =~ rack_request.headers['HTTP_AUTHORIZATION']
+    OauthResource::Connection.from_hash(client, { access_token: token })
+  end
+
+  def self.from_token_object(client, token_object)
+    from_hash(client, {
+      access_token:   token_object.token,
+      refresh_token:  token_object.refresh_token,
+      expires_at:     token_object.expires_at
+    })
+  end
 
   def to_hash
     {
@@ -19,6 +47,8 @@ class OauthResource::Connection < Oauth2::Access Token
       forced_request(verb, path, opts, &block)
     end
   end
+
+  private
 
   def cached_request(verb, path, opts={}, &block)
     options_hash = { verb: verb, token: token, opts: opts, block: block }

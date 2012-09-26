@@ -68,6 +68,7 @@ module OauthResource
       def connection
         conn = OauthResource::Connection.new(client, nil)
         conn.cache_options = cache_options
+        conn
       end
 
       private
