@@ -8,7 +8,6 @@ module OauthResource::Configuration
       :token_url        => '/oauth/token',
       :token_method     => :post,
       :connection_opts  => {},
-      :connection_build => block,
       :max_redirects    => 5,
       :raise_errors     => true
     }
