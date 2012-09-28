@@ -16,6 +16,7 @@ module OauthResource
   autoload :Connection
   autoload :Middleware
   autoload :ThreadLocal
+  autoload :Client
 
 end
 

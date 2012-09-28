@@ -1,8 +1,11 @@
 class OauthResource::Connection < OAuth2::AccessToken
 
-  attr_accessor :cache_options
+  attr_reader :cache_options
 
   def self.tokenize(client, object)
+
+    @cache_options = object.delete(:cache_options)
+
     if object.is_a?(Hash) && object.has_key?(:access_token)
       from_hash(client, object.dup)
 

@@ -31,14 +31,13 @@ module OauthResource
     # Relationships
     include OauthResource::Relationships
 
+    # Delegate stuff to client
+    delegate :site, :site=, :format, :format=, to: :client
+
     # Set up the Attributes
     thread_local_accessor :current_connection
-    class_attribute :client_id,
-                    :client_secret,
-                    :site,
-                    :resource_name,
+    class_attribute :resource_name,
                     :path,
-                    :format,
                     :include_root_in_json,
                     :connection,
                     :permitted_attributes,
@@ -46,34 +45,18 @@ module OauthResource
                     :cache,
                     :cache_options
 
-    # Setup global defaults
-    self.client_id            =   OauthResource::Configuration.client_id
-    self.client_secret        =   OauthResource::Configuration.client_secret
-    self.site                 =   OauthResource::Configuration.site
-    self.format               =   OauthResource::Configuration.default_format
-    self.include_root_in_json =   OauthResource::Configuration.include_root_in_json || false
+    self.include_root_in_json =   OauthResource::Configuration.include_root_in_json
     self.params               =   {}
+    self.current_connection   =   {}
 
     class << self
 
       def client
-        OAuth2::Client.new(
-          client_id,
-          client_secret,
-          site: site,
-          raise_errors: true,
-          connection_opts: {
-            headers: {
-              Accept: "application/#{format}"
-            }
-          }
-        )
+        @client ||= OauthResource::Client.new
       end
 
       def connection
-        conn = OauthResource::Connection.tokenize(client, current_connection)
-        conn.cache_options = cache_options
-        conn
+        OauthResource::Connection.tokenize(client, current_connection.merge({cache_options: cache_options}))
       end
 
       private
