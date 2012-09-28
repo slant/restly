@@ -4,22 +4,29 @@ class OauthResource::Connection < OAuth2::AccessToken
 
   def self.tokenize(client, object)
     if object.is_a?(Hash) && object.has_key?(:access_token)
-      OauthResource::Connection.from_hash(client, object)
+      from_hash(client, object.dup)
 
     elsif object.is_a?(Rack::Request)
-      OauthResource::Connection.from_rack_request(client, object)
+      from_rack_request(client, object)
 
     elsif object.is_a?(OAuth2::AccessToken)
-      OauthResource::Connection.from_token_object(client, object)
+      from_token_object(client, object)
+
+    elsif object.is_a?(OauthResource::Middleware)
+      /(?<token>\w+)$/i =~ object.env['HTTP_AUTHORIZATION']
+      token ||= object.env['rack.session'][OauthResource::Configuration.session_key]
+      from_hash(client, { access_token: token.dup })
 
     else
-      raise OauthResource::Error::InvalidToken, 'Invalid token format!'
+      new(client, nil)
+
     end
+
   end
 
   def self.from_rack_request(client, rack_request)
     /(?<token>\w+)$/i =~ rack_request.headers['HTTP_AUTHORIZATION']
-    OauthResource::Connection.from_hash(client, { access_token: token })
+    from_hash(client, { access_token: token })
   end
 
   def self.from_token_object(client, token_object)

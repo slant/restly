@@ -14,6 +14,8 @@ module OauthResource
   autoload :Relationships
   autoload :Error
   autoload :Connection
-
+  autoload :Middleware
 
 end
+
+require 'oauth_resource/railtie' if Object.const_defined?('Rails')

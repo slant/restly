@@ -4,11 +4,13 @@ module OauthResource::Base::Instance
   autoload :Actions
   autoload :Attributes
   autoload :Persistence
+  autoload :Serialization
 
   include OauthResource::Base::GenericMethods
   include Actions
   include Attributes
   include Persistence
+  include Serialization
 
   included do
     attr_reader :init_options, :response

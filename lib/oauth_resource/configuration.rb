@@ -1,7 +1,11 @@
 module OauthResource::Configuration
 
   def self.config
-    @config || {}
+    defaults = {
+      session_key: :access_token,
+      load_middleware: true
+    }
+    defaults.merge(@config || {})
   end
 
   def self.load_config(hash)

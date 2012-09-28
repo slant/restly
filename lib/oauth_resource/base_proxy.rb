@@ -4,28 +4,28 @@ class OauthResource::BaseProxy < SimpleDelegator
   def initialize(receiver)
 
     # Dupe the Requester
-    @receiver = if receiver.class == Class
-                  receiver.dup
-                else
-                  receiver
-                end
+    if receiver.class == Class
+      @receiver = receiver.dup
 
-    # Some Key Methods Added to the Duplicated Requester
-    @receiver.class_eval %{
+      # Some Key Methods Added to the Duplicated Requester
+      @receiver.class_eval %{
 
-      def inspect
-        super.gsub(/^(#<)?#<[a-z0-9]+:([a-z0-9]+)(>)?/i, '#<#{receiver.name}:\\2')
-      end
+        def inspect
+          super.gsub(/^(#<)?#<[a-z0-9]+:([a-z0-9]+)(>)?/i, '#<#{receiver.name}:\\2')
+        end
 
-      def self.inspect
-        super.gsub(/^#<[a-z0-9]+:.*/i, '#{receiver.name}')
-      end
+        def self.inspect
+          super.gsub(/^#<[a-z0-9]+:.*/i, '#{receiver.name}')
+        end
 
-      def self.name
-        "#{receiver.name}"
-      end
+        def self.name
+          "#{receiver.name}"
+        end
 
-    }
+      }
+    else
+      @receiver = receiver
+    end
 
     # Initialize the Delegator
     super(@receiver)

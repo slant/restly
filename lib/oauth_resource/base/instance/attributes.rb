@@ -19,7 +19,7 @@ module OauthResource::Base::Instance::Attributes
       hash[key] = nil
       hash
     end
-    @attributes.reverse_merge(nil_values)
+    @attributes.with_indifferent_access.reverse_merge(nil_values)
   end
 
   def attribute_permitted?(attr)

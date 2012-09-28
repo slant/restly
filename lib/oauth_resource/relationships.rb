@@ -14,7 +14,7 @@ module OauthResource::Relationships
 
     def belongs_to_resource(relationship, opts={})
 
-      define_method relationship do |options|
+      define_method relationship do |options={}|
         self.extend OauthResource::Relationships::Builder
         combined_opts = opts.merge(options)
 
@@ -26,7 +26,7 @@ module OauthResource::Relationships
 
     def has_one_resource(relationship, opts={})
 
-      define_method relationship do |options|
+      define_method relationship do |options={}|
         self.extend OauthResource::Relationships::Builder
         combined_opts = opts.merge(options)
 
@@ -38,7 +38,7 @@ module OauthResource::Relationships
 
     def has_many_resources(relationship, opts={})
 
-      define_method relationship do |options|
+      define_method relationship do |options={}|
         self.extend OauthResource::Relationships::Builder
         combined_opts = opts.merge(options)
         parent = self
@@ -48,7 +48,7 @@ module OauthResource::Relationships
         objects_array = if opts[:through]
           joiner = send(opts[:through])
           relationship = relationship.to_s.singularize.to_sym
-          joiner.collect { |i| i.relationship(options) }
+          joiner.collect { |i| i.send(relationship, options) }
 
         else
           relationship_klass_scoped = relationship_klass.with_params("with_#{resource_name}_id".to_sym => id)
@@ -56,7 +56,7 @@ module OauthResource::Relationships
 
         end
 
-        collection = OauthResource::Base::Collection.new relationship_klass, objects_array
+        collection = OauthResource::Collection.new relationship_klass, objects_array
         OauthResource::Proxies::Association.new(collection, parent, joiner)
 
       end

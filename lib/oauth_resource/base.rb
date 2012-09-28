@@ -2,7 +2,6 @@ module OauthResource
   class Base
     # Autoload
     extend ActiveSupport::Autoload
-    autoload :Collection
     autoload :Pagination
     autoload :Resource
     autoload :Instance
@@ -13,12 +12,14 @@ module OauthResource
     extend  ActiveModel::Naming
     extend  ActiveModel::Callbacks
     extend  ActiveModel::Translation
-    include ActiveModel::Serialization
     include ActiveModel::Conversion
     include ActiveModel::Dirty
     include ActiveModel::MassAssignmentSecurity
     include ActiveModel::Observing
     include ActiveModel::Validations
+    include ActiveModel::Serialization
+    include ActiveModel::Serializers::JSON
+    include ActiveModel::Serializers::Xml
 
     # Actions
     extend  OauthResource::Base::Resource
@@ -66,7 +67,7 @@ module OauthResource
       end
 
       def connection
-        conn = OauthResource::Connection.new(client, nil)
+        conn = OauthResource::Connection.tokenize(client, Thread.current[:oauth_resource_token_hash])
         conn.cache_options = cache_options
         conn
       end
