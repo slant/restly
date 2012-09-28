@@ -7,7 +7,6 @@ class OauthResource::Client < OAuth2::Client
     opts = args.extract_options!
     self.id =     args[0] || OauthResource::Configuration.client_id
     self.secret = args[1] || OauthResource::Configuration.client_secret
-    self.secret = client_secret
     self.site = opts.delete(:site) || OauthResource::Configuration.site
     self.options = OauthResource::Configuration.client_options.merge(opts)
     self.ssl = opts.delete(:ssl) || OauthResource::Configuration.ssl

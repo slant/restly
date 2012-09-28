@@ -31,9 +31,6 @@ module OauthResource
     # Relationships
     include OauthResource::Relationships
 
-    # Delegate stuff to client
-    delegate :site, :site=, :format, :format=, to: :client
-
     # Set up the Attributes
     thread_local_accessor :current_connection
     class_attribute :resource_name,
@@ -50,6 +47,9 @@ module OauthResource
     self.current_connection   =   {}
 
     class << self
+
+      # Delegate stuff to client
+      delegate :site, :site=, :format, :format=, to: :client
 
       def client
         @client ||= OauthResource::Client.new

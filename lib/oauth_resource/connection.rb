@@ -1,13 +1,11 @@
 class OauthResource::Connection < OAuth2::AccessToken
 
-  attr_reader :cache_options
+  attr_accessor :cache_options
 
   def self.tokenize(client, object)
 
-    @cache_options = object.delete(:cache_options)
-
     if object.is_a?(Hash) && object.has_key?(:access_token)
-      from_hash(client, object.dup)
+      from_hash(client, object)
 
     elsif object.is_a?(Rack::Request)
       from_rack_request(client, object)
@@ -16,9 +14,11 @@ class OauthResource::Connection < OAuth2::AccessToken
       from_token_object(client, object)
 
     elsif object.is_a?(OauthResource::Middleware)
+
       /(?<token>\w+)$/i =~ object.env['HTTP_AUTHORIZATION']
-      token ||= object.env['rack.session'][OauthResource::Configuration.session_key]
-      from_hash(client, { access_token: token.dup })
+      return from_rack_request(client, object) if token
+      token_hash = object.env['rack.session'][OauthResource::Configuration.session_key] || {}
+      from_hash(client, token_hash)
 
     else
       new(client, nil)
@@ -27,8 +27,17 @@ class OauthResource::Connection < OAuth2::AccessToken
 
   end
 
+  def initialize(client, token, opts={})
+    self.cache_options = opts.delete(:cache_options)
+    super
+  end
+
+  def self.from_hash(client, token_hash)
+    super(client, token_hash.dup)
+  end
+
   def self.from_rack_request(client, rack_request)
-    /(?<token>\w+)$/i =~ rack_request.headers['HTTP_AUTHORIZATION']
+    /(?<token>\w+)$/i =~ rack_request.env['HTTP_AUTHORIZATION']
     from_hash(client, { access_token: token })
   end
 

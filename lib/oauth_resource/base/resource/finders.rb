@@ -16,6 +16,8 @@ module OauthResource::Base::Resource::Finders
     instance_from_response connection.post(path_with_format, body: instance.attributes, params: params)
   end
 
+  private
+
   def collection_from_response(response)
     raise OauthResource::Error::InvalidResponse unless response.is_a? OAuth2::Response
     OauthResource::Collection.new self, nil, response: response

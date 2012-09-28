@@ -1,8 +1,5 @@
 class OauthResource::Collection < Array
   extend ActiveSupport::Autoload
-  #include ActiveModel::Serialization
-  #include ActiveModel::Serializers::JSON
-  #include ActiveModel::Serializers::Xml
 
   autoload :Pagination
 
@@ -28,12 +25,13 @@ class OauthResource::Collection < Array
     super(instance)
   end
 
-  private
-
-  def as_json(opts={})
-    opts.merge!({ only: 'attributes' })
-    super(opts)
+  def serializable_hash(options = nil)
+    self.collect do |i|
+      i.serializable_hash(options)
+    end
   end
+
+  private
 
   def items_from_response
     parsed = @response.parsed || {}

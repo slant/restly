@@ -15,14 +15,14 @@ module OauthResource::Configuration
   end
 
   def self.client_options
-    @config.select do |k,v|
+    config.select do |k,v|
       [ :authorize_url,
         :token_url,
         :token_method,
         :connection_opts,
         :max_redirects,
         :raise_errors
-      ].include?(k)
+      ].include?(k.to_sym)
     end
   end
 

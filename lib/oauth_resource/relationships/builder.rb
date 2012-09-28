@@ -19,8 +19,8 @@ module OauthResource::Relationships::Builder
     model = model.constantize
 
     # Auto-authorization, fail with error!
-    if (!model.authorized? && self.respond_to?(:authorized?) && self.authorized?) || (connection = opts[:authorize])
-      model.authorize(connection || self.connection)
+    if (!model.authorized? && self.respond_to?(:authorized?) && self.authorized?) || (opts[:authorize])
+      model.authorize(opts[:authorize] || self.connection)
     else
       model
     end

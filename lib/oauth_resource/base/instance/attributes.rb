@@ -47,6 +47,8 @@ module OauthResource::Base::Instance::Attributes
     attribute(attr)
   end
 
+  private
+
   def attribute_for_inspect(attr_name)
     value = attribute(attr_name)
     if value.is_a?(String) && value.length > 50
