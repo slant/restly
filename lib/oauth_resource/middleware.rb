@@ -8,7 +8,7 @@ class OauthResource::Middleware
 
   def call(env)
     @env = env
-    Thread.current[:oauth_resource_token_hash] = OauthResource::Connection.tokenize(OauthResource::Base.client, self).to_hash
+    OauthResource::Base.current_connection = OauthResource::Connection.tokenize(OauthResource::Base.client, self).to_hash
     app.call(env)
   end
 

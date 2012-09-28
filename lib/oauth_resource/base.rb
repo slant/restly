@@ -8,6 +8,9 @@ module OauthResource
     autoload :Collection
     autoload :GenericMethods
 
+    # Thread Local Accessor
+    extend OauthResource::ThreadLocal
+
     # Active Model
     extend  ActiveModel::Naming
     extend  ActiveModel::Callbacks
@@ -22,13 +25,14 @@ module OauthResource
     include ActiveModel::Serializers::Xml
 
     # Actions
-    extend  OauthResource::Base::Resource
-    include OauthResource::Base::Instance
+    extend  Resource
+    include Instance
 
     # Relationships
     include OauthResource::Relationships
 
     # Set up the Attributes
+    thread_local_accessor :current_connection
     class_attribute :client_id,
                     :client_secret,
                     :site,
@@ -67,7 +71,7 @@ module OauthResource
       end
 
       def connection
-        conn = OauthResource::Connection.tokenize(client, Thread.current[:oauth_resource_token_hash])
+        conn = OauthResource::Connection.tokenize(client, current_connection)
         conn.cache_options = cache_options
         conn
       end
