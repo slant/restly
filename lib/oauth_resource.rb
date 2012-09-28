@@ -15,6 +15,7 @@ module OauthResource
   autoload :Error
   autoload :Connection
   autoload :Middleware
+  autoload :Client
 
 end
 
