@@ -35,7 +35,7 @@ class OauthResource::Collection < Array
 
   def items_from_response
     parsed = @response.parsed || {}
-    parsed = parsed[resource.resource_name.pluralize] if parsed[resource.resource_name.pluralize]
+    parsed = parsed[resource.resource_name.pluralize] if parsed.is_a?(Hash) && parsed[resource.resource_name.pluralize]
     parsed.collect do |instance|
       instance = instance[resource.resource_name] if instance[resource.resource_name]
       resource.new(instance, connection: resource.connection)

@@ -60,7 +60,8 @@ module OauthResource::Base::Instance::Attributes
 
   def set_attributes_from_response
     parsed = response.parsed || {}
-    parsed = parsed[resource_name] if parsed[resource_name]
+    parsed = parsed[resource_name] if parsed.is_a?(Hash) && parsed[resource_name]
+
     parsed.select!{ |k,v| attribute_permitted?(k) }
     self.attributes = parsed
   end
