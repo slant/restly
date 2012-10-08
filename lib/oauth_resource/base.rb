@@ -40,11 +40,16 @@ module OauthResource
                     :permitted_attributes,
                     :params,
                     :cache,
-                    :cache_options
+                    :cache_options,
+                    :client_token
+
 
     self.include_root_in_json =   OauthResource::Configuration.include_root_in_json
+    self.cache                =   OauthResource::Configuration.cache
+    self.cache_options        =   OauthResource::Configuration.cache
     self.params               =   {}
     self.current_connection   =   {}
+    self.client_token         =   client.client_credentials.get_token rescue nil
 
     class << self
 
@@ -75,10 +80,6 @@ module OauthResource
             self.permitted_attributes.uniq!
           end
         end
-      end
-
-      def resource_attrs_from_spec!
-        resource_attr spec['attributes']
       end
 
       def resource
