@@ -6,12 +6,12 @@ require 'active_model'
 #require 'addressable/uri'
 require 'rspec'
 require 'rspec/autorun'
-require 'oauth_resource'
+require 'restly'
 require 'fakeweb'
 require 'fakewebs'
 
 
-OauthResource::Configuration.load_config(
+Restly::Configuration.load_config(
   {
     site: 'http://fakesi.te',
     client_id: 'default_id',
