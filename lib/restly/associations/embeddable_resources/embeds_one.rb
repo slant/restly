@@ -4,4 +4,8 @@ class Restly::Associations::EmbeddableResources::EmbedsOne < Restly::Association
     false
   end
 
+  def embedded?
+    true
+  end
+
 end

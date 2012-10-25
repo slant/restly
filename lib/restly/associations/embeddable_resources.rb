@@ -10,9 +10,15 @@ module Restly::Associations::EmbeddableResources
     exclude_field(name) if ancestors.include?(Restly::Base)
     self.resource_associations[name] = association = EmbedsOne.new(self, name, options)
 
-    define_method name do
-      association.build(attributes[name])
+    define_method name do |options={}|
+      return get_association(name) if get_association(name).present?
+      set_association name, association.stub(self)
     end
+
+    define_method "#{name}=" do |value|
+      set_association name, value
+    end
+
   end
 
   # Embeds Many
@@ -20,9 +26,14 @@ module Restly::Associations::EmbeddableResources
     exclude_field(name) if ancestors.include?(Restly::Base)
     self.resource_associations[name] = association = EmbedsMany.new(self, name, options)
 
-    define_method name do
-      ( self.attributes[name] || [] ).map!{ |i| association.build(i) }
+    define_method name do |options={}|
+      get_association(name, options)
     end
+
+    define_method "#{name}=" do |value|
+      set_association name, value
+    end
+
   end
 
 end

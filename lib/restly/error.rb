@@ -1,6 +1,11 @@
 module Restly::Error
 
-  class NotAnRestly < StandardError
+  class StandardError < ::StandardError
+
+    def message
+      super.red
+    end
+
   end
 
   class RecordNotFound < StandardError
@@ -22,6 +27,9 @@ module Restly::Error
   end
 
   class InvalidConnection < StandardError
+  end
+
+  class MissingId < StandardError
   end
 
   class InvalidSpec < StandardError

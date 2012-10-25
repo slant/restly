@@ -43,8 +43,8 @@ module Restly::Base::Instance
 
   end
 
-  def pry_in
-    binding.pry
+  def loaded?
+    @loaded
   end
 
   def set_response(response)
@@ -52,7 +52,16 @@ module Restly::Base::Instance
     @response = response
     if response.try(:body)
       set_attributes_from_response
-      stub_associations_from_response
+    end
+  end
+
+  def parsed_response(response=self.response)
+    return {} unless response
+    parsed = response.parsed || {}
+    if parsed.is_a?(Hash) && parsed[resource_name]
+      parsed[resource_name]
+    else
+      parsed
     end
   end
 
@@ -61,12 +70,7 @@ module Restly::Base::Instance
   end
 
   def connection=(val)
-    @connection
-  end
-
-  # Todo: Needed?
-  def instance
-    self
+    @connection = val
   end
 
   def klass

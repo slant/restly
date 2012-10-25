@@ -32,6 +32,9 @@ module Restly
     # Set Up Callbacks
     define_model_callbacks :create, :save, :delete, :update, :initialize
 
+    # Concerned Inheritance
+    include Restly::ConcernedInheritance
+
     # Actions & Callbacks
     extend  Resource
     include Includes

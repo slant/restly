@@ -15,8 +15,9 @@ module Restly::NestedAttributes
   # One To One Association
   def assign_nested_attributes_for_one_to_one_resource_association(association_name, attributes, assignment_opts = {})
     options = self.nested_attributes_options[association_name]
-    association_attributes = attributes.delete("#{association_name}_attributes") || {}
-    associated_instance = send(association_name) || self.class.reflect_on_resource_association(association_name).build
+    association_attributes[association_name] = attributes.delete("#{association_name}_attributes") || {}
+    associated_instance = send(association_name) ||
+      self.class.reflect_on_resource_association(association_name).build(self)
     associated_instance.attributes = association_attributes
   end
 
@@ -42,7 +43,7 @@ module Restly::NestedAttributes
     attributes_collection.each do |attributes|
       attributes = attributes.with_indifferent_access
       if attributes[:id].blank?
-        send(association_name) << association.build(attributes.except(:id))
+        send(association_name) << association.build(self, attributes.except(:id))
       elsif existing_record = existing_records.find{ |record| record.id.to_s == attributes['id'].to_s }
         existing_record.attributes = attributes
       end

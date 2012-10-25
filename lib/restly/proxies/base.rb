@@ -36,4 +36,8 @@ class Restly::Proxies::Base < SimpleDelegator
     @receiver.class
   end
 
+  def proxied?
+    true
+  end
+
 end

@@ -10,17 +10,30 @@ module Restly::Associations
   autoload :HasOneThrough
   autoload :EmbeddableResources
 
-  class AssociationHash < HashWithIndifferentAccess
+  class AssociationsSet < HashWithIndifferentAccess
+  end
+
+  class IndifferentSet < Set
+
+    def include?(attr)
+      return super unless attr.is_a?(Symbol) || attr.is_a?(String)
+      super(attr.to_s) || super(attr.to_sym)
+    end
+
   end
 
   included do
 
-    extend EmbeddableResources if self == Restly::Base
+    include Restly::ConcernedInheritance
+    extend  EmbeddableResources if self == Restly::Base
     include Restly::NestedAttributes
 
     delegate :resource_name, to: :klass
     class_attribute :resource_associations, instance_reader: false, instance_writer: false
-    self.resource_associations = AssociationHash.new
+
+    attr_reader :association_attributes
+
+    self.resource_associations = AssociationsSet.new
 
     inherited do
       self.resource_associations = resource_associations.dup
@@ -28,12 +41,42 @@ module Restly::Associations
 
   end
 
-  def stub_associations_from_response(response=self.response)
-    parsed = response.parsed || {}
-    parsed = parsed[resource_name] if parsed.is_a?(Hash) && parsed[resource_name]
-    associations = parsed.select{ |i| klass.reflect_on_all_resource_associations.keys.include?(i) }
-    associations.each do |relationship|
-      relationship.collection?
+  def associations
+    IndifferentSet.new klass.reflect_on_all_resource_associations.keys.map(&:to_sym)
+  end
+
+  def set_association(attr, val)
+    association = klass.reflect_on_resource_association(attr)
+    association.valid?(val)
+    @association_attributes[attr] = val
+  end
+
+  def get_association(attr, options={})
+    association = klass.reflect_on_resource_association(attr)
+    (@association_attributes ||= {}.with_indifferent_access)[attr] || set_association(attr, association.load(self, options))
+  end
+
+  def respond_to_association?(m)
+    !!(/(?<attr>\w+)(?<setter>=)?$/ =~ m.to_s) && associations.include?(attr.to_sym)
+  end
+
+  def respond_to?(m, include_private = false)
+    respond_to_association?(m) || super
+  end
+
+  private
+
+  def method_missing(m, *args, &block)
+    if !!(/(?<attr>\w+)(?<setter>=)?$/ =~ m.to_s) && associations.include?(m)
+      attr = attr.to_sym
+      case !!setter
+        when true
+          set_association(attr, *args)
+        when false
+          get_association(attr)
+      end
+    else
+      super(m, *args, &block)
     end
   end
 
@@ -47,6 +90,10 @@ module Restly::Associations
       name.gsub(/.*::/,'').underscore
     end
 
+    def reflect_on_resource_association(association_name)
+      reflect_on_all_resource_associations[association_name]
+    end
+
     def reflect_on_all_resource_associations
       resource_associations
     end
@@ -57,32 +104,45 @@ module Restly::Associations
     def belongs_to_resource(name, options = {})
       exclude_field(name) if ancestors.include?(Restly::Base)
       self.resource_associations[name] = association = BelongsTo.new(self, name, options)
+
       define_method name do |options={}|
-        association.find_with_parent(self, options)
+        get_association(name, options)
       end
+
+      define_method "#{name}=" do |value|
+        set_association name, value
+      end
+
     end
 
     # Has One
     def has_one_resource(name, options = {})
       exclude_field(name) if ancestors.include?(Restly::Base)
       self.resource_associations[name] = association = HasOne.new(self, name, options)
+
       define_method name do |options={}|
-        association.scope_with_parent(self, options)
+        get_association(name, options)
       end
+
+      define_method "#{name}=" do |value|
+        set_association name, value
+      end
+
     end
 
     # Has One
     def has_many_resources(name, options = {})
       exclude_field(name) if ancestors.include?(Restly::Base)
       self.resource_associations[name] = association = HasMany.new(self, name, options)
+
       define_method name do |options={}|
-        association.scope_with_parent(self, options)
+        get_association(name, options)
       end
-    end
 
+      define_method "#{name}=" do |value|
+        set_association name, value
+      end
 
-    def reflect_on_resource_association(association_name)
-      reflect_on_all_resource_associations[association_name]
     end
 
   end

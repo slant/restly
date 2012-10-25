@@ -12,26 +12,34 @@ module Restly::Base::Instance::Attributes
   end
 
   def attributes
-    nil_values = fields.inject({}) do |hash, key|
-      hash[key] = nil
+    fields.reduce(HashWithIndifferentAccess.new) do |hash, key|
+      hash[key] = read_attribute key, autoload: false
       hash
     end
-    @attributes.reverse_merge!(nil_values)
   end
 
   def write_attribute(attr, val)
     if fields.include?(attr)
       send("#{attr}_will_change!".to_sym) unless val == @attributes[attr.to_sym] || !@loaded
       @attributes[attr.to_sym] = val
+
+    elsif (association = klass.reflect_on_resource_association attr).present?
+      set_association attr, association.stub(self, val) unless (@association_attributes ||= {}.with_indifferent_access)[attr].present?
+
     else
       puts "WARNING: Attribute `#{attr}` not written. ".colorize(:yellow) +
                "To fix this add the following the the model. -- field :#{attr}"
     end
   end
 
-  def read_attribute(attr)
-    raise NoMethodError, "undefined method #{attr} for #{klass}" unless fields.include?(attr)
-    attributes[attr.to_sym]
+  def read_attribute(attr, options={})
+    options.reverse_merge!({autoload: true})
+    if @attributes[attr.to_sym].nil? && !!options[:autoload] && !loaded?
+      reload!
+      read_attribute(attr)
+    else
+      @attributes[attr.to_sym]
+    end
   end
 
   alias :attribute :read_attribute
@@ -51,10 +59,18 @@ module Restly::Base::Instance::Attributes
     attribute(attr)
   end
 
+  def respond_to_attribute?(m)
+    !!(/(?<attr>\w+)(?<setter>=)?$/ =~ m.to_s) && associations.include?(attr)
+  end
+
+  def respond_to?(m, include_private = false)
+    respond_to_attribute?(m) || super
+  end
+
   private
 
   def attribute_for_inspect(attr_name)
-    value = attribute(attr_name)
+    value = attribute(attr_name, autoload: false)
     if value.is_a?(String) && value.length > 50
       "#{value[0..50]}...".inspect
     else
@@ -63,26 +79,20 @@ module Restly::Base::Instance::Attributes
   end
 
   def set_attributes_from_response(response=self.response)
-    parsed = response.parsed || {}
-    parsed = parsed[resource_name] if parsed.is_a?(Hash) && parsed[resource_name]
-    self.attributes = parsed
+    self.attributes = parsed_response(response)
   end
 
   def method_missing(m, *args, &block)
     if !!(/(?<attr>\w+)(?<setter>=)?$/ =~ m.to_s) && fields.include?(m)
       case !!setter
         when true
-          write_attribute(m, *args)
+          write_attribute(attr, *args)
         when false
-          read_attribute(m)
+          read_attribute(attr)
       end
     else
       super(m, *args, &block)
     end
-  end
-
-  def respond_to_missing?(method_name, include_private = false)
-    !!(/(?<attr>\w+)=?$/ =~ method_name.to_s) && fields.include?(method_name)
   end
 
 end

@@ -7,7 +7,7 @@ class Restly::Associations::HasOne < Restly::Associations::Base
     super
   end
 
-  def scope_with_parent(parent, options)
+  def load(parent, options)
     options.reverse_merge!(self.options)
     association_class = polymorphic ? [@namespace, instance.send("#{name}_type")] : self.association_class
     association_class = authorize(association_class, options[:authorize])

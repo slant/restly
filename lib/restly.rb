@@ -19,6 +19,7 @@ module Restly
   autoload :Middleware
   autoload :ThreadLocal
   autoload :Client
+  autoload :ConcernedInheritance
 
 end
 

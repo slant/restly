@@ -21,4 +21,8 @@ module Restly::Base::GenericMethods
     connection.token.present?
   end
 
+  def proxied?
+    true
+  end
+
 end
