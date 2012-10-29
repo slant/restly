@@ -3,6 +3,7 @@ module Restly::Proxies
 
   autoload :Authorization
   autoload :WithParams
+  autoload :WithPath
   autoload :Base
 
   module Associations

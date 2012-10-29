@@ -8,6 +8,10 @@ module Restly::Base::GenericMethods
     Restly::Proxies::WithParams.new self, params
   end
 
+  def with_path(*args)
+    Restly::Proxies::WithPath.new self, *args
+  end
+
   def path_with_format(*args)
     path = [self.path, args].flatten.compact.join('/')
     [path, format].compact.join('.') if path
