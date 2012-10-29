@@ -1,11 +1,11 @@
 module Restly::Base::GenericMethods
 
   def authorize(token_object)
-    Restly::Proxies::Auth.new self, token_object
+    Restly::Proxies::Authorization.new self, token_object
   end
 
   def with_params(params={})
-    Restly::Proxies::Params.new self, params
+    Restly::Proxies::WithParams.new self, params
   end
 
   def path_with_format(*args)

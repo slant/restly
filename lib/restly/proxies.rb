@@ -1,10 +1,8 @@
 module Restly::Proxies
   extend ActiveSupport::Autoload
 
-  autoload :Auth
-  autoload :AssociatedInstance
-  autoload :AssociatedCollection
-  autoload :Params
+  autoload :Authorization
+  autoload :WithParams
   autoload :Base
 
   module Associations

@@ -1,4 +1,4 @@
-module Restly::Base::WriteCallbacks
+module Restly::Base::Instance::WriteCallbacks
   extend ActiveSupport::Concern
 
   included do

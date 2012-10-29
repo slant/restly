@@ -2,13 +2,10 @@ module Restly
   class Base
     # Autoload
     extend ActiveSupport::Autoload
-    #autoload :Pagination # Todo!
     autoload :Resource
     autoload :Instance
-    autoload :Collection
     autoload :GenericMethods
     autoload :Includes
-    autoload :WriteCallbacks
     autoload :MassAssignmentSecurity
     autoload :Fields
 
@@ -41,7 +38,6 @@ module Restly
     include Instance
     include Fields
     include MassAssignmentSecurity
-    include WriteCallbacks
 
     # Relationships
     include Restly::Associations

@@ -1,4 +1,4 @@
-module Restly::Base::Collection::Pagination
+module Restly::Collection::Pagination
 
   def page(num)
     with_params(page: num, per_page: per_page).all.paginate(page: num, per_page: per_page)

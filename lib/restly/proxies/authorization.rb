@@ -1,4 +1,4 @@
-class Restly::Proxies::Auth < Restly::Proxies::Base
+class Restly::Proxies::Authorization < Restly::Proxies::Base
 
   def initialize(receiver, token)
     super(receiver)
