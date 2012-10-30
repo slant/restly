@@ -26,45 +26,38 @@ $ rails generate restly:configuration
 This will generate a file like so:
 
 ```yaml
-development:
+development: &development
   site: http://example.com # Change This
   default_format: json # defaults to: json
 
-  ## Cache Requests?
+  ## Would you like requests to be cached?
   # cache: true
   # cache_options:
   #   expires_in: 3600
 
-  ## If you are using oauth:
+  ## Enable Oauth?
   # use_oauth: true
   # oauth_options:
-  #   client_id: 98f7901322970fb0c40229dfc8f5a1a5
-  #   client_secret: 5331b2a8d5dc2cf0aa692bc3a39ac789
+  #   client_id: %client_id%
+  #   client_secret: %client_secret%
 
 test:
-  site: http://example.com # Change This
-  default_format: json # defaults to: json
-
-  ## If you are using oauth:
-  # use_oauth: true
-  # oauth_options:
-  #   client_id: 98f7901322970fb0c40229dfc8f5a1a5
-  #   client_secret: 5331b2a8d5dc2cf0aa692bc3a39ac789
+  <<: *development
 
 production:
   site: http://example.com # Change This
   default_format: json # defaults to: json
 
-  ## Cache Requests?
+  # Would you like requests to be cached?
   cache: true
   cache_options:
-    expires_in: 3600
+     expires_in: 3600
 
-  ## If you are using oauth:
+  ## Enable Oauth?
   # use_oauth: true
   # oauth_options:
-  #   client_id: 98f7901322970fb0c40229dfc8f5a1a5
-  #   client_secret: 5331b2a8d5dc2cf0aa692bc3a39ac789
+  #   client_id: %client_id%
+  #   client_secret: %client_secret%
 
 ```
 

@@ -40,6 +40,6 @@ module Restly::Configuration
   end
 
   config_file = File.join(Rails.root, 'config', 'restly.yml')
-  load_config YAML.load_file(config_file)[Rails.env] if defined? Rails && File.exists?(config_file)
+  load_config YAML.load_file(config_file)[Rails.env] if defined?(Rails) && File.exists?(config_file)
 
 end
