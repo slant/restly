@@ -68,17 +68,24 @@ production:
 
 ```
 
-
-
 ## Creating a Restly Model
 
 # Using the generator
 
 ```
-rails generate restly:model MyModel
+$ rails generate restly:model MyModel
 ```
 
-This will generate a model like so
+This will generate a model that looks like this:
+
+```ruby
+class MyModel < Restly::Base
+
+  # self.resource_name = 'my_model'
+  # self.path = 'some_path/to_resource' # defaults to: 'resource_name.pluralized'
+
+end
+```
 
 ## Contributing
 

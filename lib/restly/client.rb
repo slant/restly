@@ -5,8 +5,8 @@ class Restly::Client < OAuth2::Client
 
   def initialize(*args, &block)
     opts = args.extract_options!
-    self.id =     args[0] || Restly::Configuration.client_id
-    self.secret = args[1] || Restly::Configuration.client_secret
+    self.id =     args[0] || Restly::Configuration.oauth_options[:client_id]
+    self.secret = args[1] || Restly::Configuration.oauth_options[:client_secret]
     self.site = opts.delete(:site) || Restly::Configuration.site
     self.options = Restly::Configuration.client_options.merge(opts)
     self.ssl = opts.delete(:ssl) || Restly::Configuration.ssl
