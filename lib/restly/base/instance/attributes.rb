@@ -35,7 +35,7 @@ module Restly::Base::Instance::Attributes
   def read_attribute(attr, options={})
     options.reverse_merge!({autoload: true})
     if @attributes[attr.to_sym].nil? && !!options[:autoload] && !loaded?
-      reload!
+      load!
       read_attribute(attr)
     else
       @attributes[attr.to_sym]
