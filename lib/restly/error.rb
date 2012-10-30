@@ -8,31 +8,21 @@ module Restly::Error
 
   end
 
-  class RecordNotFound < StandardError
-  end
+  errors = %w{
+    RecordNotFound
+    WrongResourceType
+    InvalidParentAssociation
+    InvalidJoinerAssociation
+    InvalidObject
+    InvalidToken
+    InvalidConnection
+    MissingId
+    InvalidSpec
+    AssociationError
+  }
 
-  class WrongResourceType < StandardError
-  end
-
-  class InvalidParentAssociation < StandardError
-  end
-
-  class InvalidJoinerAssociation < StandardError
-  end
-
-  class InvalidObject < StandardError
-  end
-
-  class InvalidToken < StandardError
-  end
-
-  class InvalidConnection < StandardError
-  end
-
-  class MissingId < StandardError
-  end
-
-  class InvalidSpec < StandardError
+  errors.each do |error|
+    const_set(error.to_sym, Class.new(StandardError))
   end
 
 end
