@@ -1,10 +1,10 @@
 module Restly::Base::Resource::Finders
 
-  def find(*args)
+  def find(id, *args)
     options = args.extract_options!
 
     #params[pagination_options[:params][:page]] = options[:page] if pagination
-    instance_from_response connection.get(path_with_format(args.first), params: params)
+    instance_from_response connection.get(path_with_format(id), params: params)
   end
 
   def all
@@ -15,8 +15,6 @@ module Restly::Base::Resource::Finders
     instance = self.new(attributes, options)
     instance.save
   end
-
-  private
 
   def collection_from_response(response)
     raise Restly::Error::InvalidResponse unless response.is_a? OAuth2::Response
