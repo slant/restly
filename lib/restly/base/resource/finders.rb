@@ -1,4 +1,9 @@
 module Restly::Base::Resource::Finders
+  extend ActiveSupport::Concern
+
+  included do
+    delegate :first, to: :all
+  end
 
   def find(id, *args)
     options = args.extract_options!

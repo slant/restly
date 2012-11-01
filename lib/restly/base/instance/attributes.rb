@@ -83,7 +83,7 @@ module Restly::Base::Instance::Attributes
   end
 
   def method_missing(m, *args, &block)
-    if !!(/(?<attr>\w+)(?<setter>=)?$/ =~ m.to_s) && fields.include?(m)
+    if !!(/(?<attr>\w+)(?<setter>=)?$/ =~ m.to_s) && fields.include?(attr)
       case !!setter
         when true
           write_attribute(attr, *args)

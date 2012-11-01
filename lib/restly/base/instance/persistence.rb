@@ -1,8 +1,19 @@
 module Restly::Base::Instance::Persistence
 
   def exists?
-    status = @response.try(:status).to_i
+    return false unless id
+
+    begin
+      @response ||= connection.get(path, force: true)
+
+    rescue OAuth2::Error => e
+      @response = e.response
+
+    end
+
+    status = @response.status.to_i
     status < 300 && status >= 200
+
   end
 
   def persisted?
