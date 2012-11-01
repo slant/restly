@@ -61,9 +61,12 @@ production:
 
 ```
 
+=======
+*__Restly ships with OAuth2 support, allowing you to authorize requests before making them.__*
+
 ## Creating a Restly Model
 
-# Using the generator
+### Using the generator
 
 ```
 $ rails generate restly:model MyModel
@@ -79,6 +82,46 @@ class MyModel < Restly::Base
 
 end
 ```
+=======
+Generates:
+
+```
+class MyModel < Restly::Base
+
+    field :id # implied
+    field :my_attr
+
+end
+```
+
+## Interacting With Objects
+
+In restly interacting with objects is familiar.
+
+__Getting the Collection:__
+
+```MyModel.all```
+
+__Finding an Instance:__
+
+```my_instance = MyModel.find(1)```
+
+__Updating an Instance:__
+
+```my_instance.update_attributes({my_attr: 'val'})```
+
+or
+
+```ruby
+my_instance.my_attr = 'val'
+my_instnace.save
+```
+
+__Creating an Instance__
+
+```
+my_instance
+
 
 ## Contributing
 
