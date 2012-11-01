@@ -6,6 +6,7 @@ class OtherObject < Restly::Base
 
   field :foo_var
   field :bar_lee
+  field :sample_object_id
   field :created_at
   field :updated_at
 
