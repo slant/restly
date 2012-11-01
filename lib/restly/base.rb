@@ -57,7 +57,7 @@ module Restly
     self.cache_options        =   Restly::Configuration.cache_options
     self.params               =   {}
     self.current_token        =   {}
-    self.client_token         =   client.client_credentials.get_token rescue nil
+    self.client_token         =   Restly::Configuration.use_oauth ? (client.client_credentials.get_token rescue nil) : nil
 
     # Set Defaults on Inheritance
     inherited do
