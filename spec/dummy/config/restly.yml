@@ -1,0 +1,32 @@
+development: &development
+  site: http://localhost:3000
+  default_format: json
+
+  ## Would you like requests to be cached?
+  # cache: true
+  # cache_options:
+  #   expires_in: 3600
+
+  ## Enable Oauth?
+  # use_oauth: true
+  # oauth_options:
+  #   client_id: %client_id%
+  #   client_secret: %client_secret%
+
+test:
+  <<: *development
+
+production:
+  site: http://example.com # Change This
+  default_format: json # defaults to: json
+
+  # Would you like requests to be cached?
+  cache: true
+  cache_options:
+     expires_in: 3600
+
+  ## Enable Oauth?
+  # use_oauth: true
+  # oauth_options:
+  #   client_id: %client_id%
+  #   client_secret: %client_secret%

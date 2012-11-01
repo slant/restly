@@ -1,0 +1,2 @@
+class SampleObjectsController < ApplicationController
+end
