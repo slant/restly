@@ -1,4 +1,4 @@
-class Restly::Associations::EmbeddableResources::EmbedsMany < Restly::EmbeddedAssociations::Base
+class Restly::EmbeddableResources::EmbedsMany < Restly::EmbeddedAssociations::Base
 
   def collection?
     true

@@ -1,4 +1,4 @@
-module Restly::Associations::EmbeddedAssociations
+module Restly::EmbeddedAssociations::ClassMethods
 
   # Embeds One
   def embeds_resource(name, options = {})
