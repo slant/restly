@@ -9,8 +9,7 @@ class Api::OtherObjectsController < ApplicationController
   end
 
   def index
-    binding.pry
-    render json: @other_objects = resource.all
+    render json: @other_objects = @resource.all
   end
 
   def create
