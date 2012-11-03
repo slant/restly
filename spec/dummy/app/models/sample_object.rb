@@ -12,4 +12,6 @@ class SampleObject < Restly::Base
   field :created_at
   field :updated_at
 
+  attr_protected :created_at, :updated_at, :id
+
 end

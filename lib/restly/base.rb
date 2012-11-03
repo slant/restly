@@ -28,7 +28,7 @@ module Restly
     include ActiveModel::Serializers::Xml
 
     # Set Up Callbacks
-    define_model_callbacks :create, :save, :delete, :update, :initialize
+    define_model_callbacks :create, :save, :destroy, :update, :initialize
 
     # Concerned Inheritance
     include Restly::ConcernedInheritance
@@ -46,8 +46,8 @@ module Restly
 
     # Set up the Attributes
     thread_local_accessor :current_token
+    class_attribute :path, instance_writer: false, instance_reader: false
     class_attribute :resource_name,
-                    :path,
                     :include_root_in_json,
                     :params,
                     :cache,

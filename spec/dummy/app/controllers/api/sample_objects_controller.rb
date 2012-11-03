@@ -5,8 +5,8 @@ class Api::SampleObjectsController < ApplicationController
   end
 
   def create
-    if (@sample_object = Api::SampleObject.create(params[:sample_object]))
-      redirect_to @sample_object
+    render json: if (@sample_object = Api::SampleObject.create(params[:sample_object]))
+      @sample_object
     else
       flash.now "Something bad Happened"
     end
@@ -19,7 +19,7 @@ class Api::SampleObjectsController < ApplicationController
   def update
     @sample_object = Api::SampleObject.find(params[:id])
     render json: if @sample_object.update_attributes(params[:sample_object])
-      redirect_to @sample_object
+      @sample_object
     else
       "Something bad Happened"
     end
@@ -28,7 +28,7 @@ class Api::SampleObjectsController < ApplicationController
   def destroy
     @sample_object = Api::SampleObject.find(params[:id])
     render json: if @sample_object.delete
-      redirect_to sample_objects_path
+      { success: true }
     else
       "Something bad Happened"
     end

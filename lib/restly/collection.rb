@@ -1,7 +1,9 @@
 class Restly::Collection < Array
   extend ActiveSupport::Autoload
+  include Restly::Base::Resource::Finders
+  include Restly::Base::Resource::BatchActions
 
-  delegate :resource_name, :connection, to: :resource
+  delegate :new, :path, :resource_name, :connection, to: :resource
 
   autoload :Pagination
 

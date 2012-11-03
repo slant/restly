@@ -4,38 +4,40 @@ class Api::OtherObjectsController < ApplicationController
 
   before_filter do
     nested_in_resources = params.select{ |param| /_id$/ =~ param }
+    params[:other_object].merge!(nested_in_resources)
     @resource = Api::OtherObject.where(nested_in_resources) if nested_in_resources.present?
   end
 
   def index
-    render json: @sample_objects = @resource.all
+    binding.pry
+    render json: @other_objects = resource.all
   end
 
   def create
-    if (@sample_object = @resource.create(params[:sample_object]))
-      redirect_to @sample_object
+    render json: if (@other_object = Api::OtherObject.create(params[:other_object]))
+      @other_object
     else
       flash.now "Something bad Happened"
     end
   end
 
   def show
-    render json: @sample_object = Api::OtherObject.find(params[:id])
+    render json: @other_object = Api::OtherObject.find(params[:id])
   end
 
   def update
-    @sample_object = Api::OtherObject.find(params[:id])
-    render json: if @sample_object.update_attributes(params[:sample_object])
-      redirect_to @sample_object
+    @other_object = Api::OtherObject.find(params[:id])
+    render json: if @other_object.update_attributes(params[:other_object])
+      @other_object
     else
       "Something bad Happened"
     end
   end
 
   def destroy
-    @sample_object = Api::OtherObject.find(params[:id])
-    render json: if @sample_object.delete
-      redirect_to sample_objects_path
+    @other_object = Api::OtherObject.find(params[:id])
+    render json: if @other_object.delete
+      { success: true }
     else
       "Something bad Happened"
     end

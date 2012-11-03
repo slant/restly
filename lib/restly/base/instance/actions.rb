@@ -10,12 +10,15 @@ module Restly::Base::Instance::Actions
   end
 
   def delete
-    run_callbacks :delete do
-      response = connection.delete(path_with_format, params: params)
-      false
-      freeze
-    end
+    response = connection.delete(path_with_format, params: params)
+    freeze
     response.status < 300
+  end
+
+  def destroy
+    run_callbacks :destroy do
+      delete
+    end
   end
 
   private

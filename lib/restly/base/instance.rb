@@ -28,25 +28,33 @@ module Restly::Base::Instance
     @changed_attributes = {}
 
     run_callbacks :initialize do
-
       @readonly = options[:readonly] || false
       set_response options[:response] if options[:response]
       @loaded = options.has_key?(:loaded) ? options[:loaded] : true
       self.attributes = attributes if attributes
       self.connection = options[:connection] if options[:connection].is_a?(OAuth2::AccessToken)
-      self.path = if response && response.response.env[:url]
-                    response.response.env[:url].path.gsub(/\.\w+$/,'')
-                  elsif respond_to?(:id) && id
-                    [path, id].join('/')
-                  else
-                    klass.path
-                  end
+
     end
 
   end
 
   def loaded?
     @loaded
+  end
+
+  def path=(val)
+    @path = val
+  end
+
+  def path
+    return @path if @path
+    if response && response.response.env[:url]
+      response.response.env[:url].path.gsub(/\.\w+$/,'')
+    elsif respond_to?(:id) && id
+      [klass.path, id].join('/')
+    else
+      klass.path
+    end
   end
 
   def set_response(response)

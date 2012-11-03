@@ -19,7 +19,7 @@ module Restly::Base::Instance::WriteCallbacks
   end
 
   def savable_resource
-    {resource_name => attributes_with_present_values}
+    {resource_name => attributes_with_present_values(writeable_attributes)}
   end
 
   def attributes_with_present_values(attributes=self.attributes)
@@ -30,6 +30,14 @@ module Restly::Base::Instance::WriteCallbacks
         hash[key] = val
       end
       hash
+    end
+  end
+
+  def writeable_attributes(attributes=self.attributes)
+    if (maa = mass_assignment_authorizer :default).is_a? ActiveModel::MassAssignmentSecurity::BlackList
+      attributes.reject{ |key, val| maa.map(&:to_sym).include?(key.to_sym) }
+    elsif mass_assignment_authorizer.is_a? ActiveModel::MassAssignmentSecurity::BlackList
+      attributes.select{ |key, val| maa.map(&:to_sym).include?(key.to_sym) }
     end
   end
 

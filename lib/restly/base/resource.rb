@@ -1,9 +1,14 @@
 module Restly::Base::Resource
   extend ActiveSupport::Autoload
+
   autoload :Finders
+  autoload :BatchActions
 
   include Restly::Base::GenericMethods
   include Finders
+  include BatchActions
+
+  delegate :first, :last, to: :all
 
   # OPTIONS FOR /:path
   # Fetches the spec of a remote resource
