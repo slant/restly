@@ -1,10 +1,13 @@
 class Restly::Proxies::Base < SimpleDelegator
 
+  delegate :is_a?, :kind_of?, to: :__getobj__
+
   # Initialize the Proxy
   def initialize(receiver)
 
     # Dupe the Requester
     if receiver.class == Class
+
       @receiver = receiver.dup
 
       # Some Key Methods Added to the Duplicated Requester
@@ -30,6 +33,8 @@ class Restly::Proxies::Base < SimpleDelegator
     # Initialize the Delegator
     super(@receiver)
   end
+
+  alias_method :proxy_class, :class
 
   # Tell the Proxy its Class!
   def class
