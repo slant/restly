@@ -1,20 +1,42 @@
 class Restly::Collection < Array
-  extend ActiveSupport::Autoload
+  # extend ActiveSupport::Autoload
   include Restly::Base::Resource::Finders
   include Restly::Base::Resource::BatchActions
+  include Restly::Base::GenericMethods
 
-  delegate :new, :path, :resource_name, :connection, to: :resource
+  delegate :resource_name, :new, :client, to: :resource
 
-  autoload :Pagination
+  # autoload :Pagination
 
   attr_reader :resource
 
   def initialize(resource, array, opts={})
     @resource = resource
     @response = opts[:response]
+    @connection
     array = items_from_response if @response.is_a?(OAuth2::Response)
     super(array)
   end
+
+  [:path, :connection, :params].each do |attr|
+    define_method attr do
+      instance_variable_get(:"@#{attr}") || resource.send(attr)
+    end
+
+    define_method "#{attr}=" do |val|
+      instance_variable_set(:"@#{attr}", val)
+    end
+  end
+
+  def create(*args)
+    self << super
+  end
+
+  def map(*args)
+    initialize resource, super
+  end
+
+  alias :collect :map
 
   def paginate(opts={})
     @pagination_opts = opts
@@ -25,17 +47,21 @@ class Restly::Collection < Array
   end
 
   def <<(instance)
-    raise Restly::Error::InvalidObject, "Object is not an instance of #{resource}" unless instance.is_a?(resource)
+    raise Restly::Error::InvalidObject, "Object is not an instance of #{resource}" unless accepts?(instance)
     super(instance)
   end
+
+  def reload!
+    replace collection_from_response(connection.get path)
+  end
+
+  private
 
   def serializable_hash(options = nil)
     self.collect do |i|
       i.serializable_hash(options)
     end
   end
-
-  private
 
   def items_from_response
     parsed = @response.parsed || {}
@@ -44,6 +70,10 @@ class Restly::Collection < Array
       instance = instance[resource_name] if instance[resource_name]
       resource.new(instance, connection: connection)
     end
+  end
+
+  def accepts?(instance)
+    instance.class.name == resource.name
   end
 
 end
