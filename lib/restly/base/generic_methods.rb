@@ -26,7 +26,7 @@ module Restly::Base::GenericMethods
   end
 
   def proxied?
-    true
+    false
   end
 
 end
