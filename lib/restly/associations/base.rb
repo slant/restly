@@ -1,11 +1,15 @@
 class Restly::Associations::Base
   extend ActiveSupport::Autoload
 
-  autoload :ClassMethods
   autoload :Loaders
   autoload :Stubs
   autoload :Modifiers
   autoload :Conditionals
+
+  include Loaders
+  include Stubs
+  include Modifiers
+  include Conditionals
 
   attr_reader :name, :association_class, :namespace, :polymorphic, :options
 

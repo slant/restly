@@ -1,4 +1,4 @@
-module Restly::Associations::Conditionals
+module Restly::Associations::Base::Conditionals
 
   # Conditionals
   def valid?(val)

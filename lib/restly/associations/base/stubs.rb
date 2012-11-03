@@ -1,4 +1,4 @@
-module Restly::Associations::Stubs
+module Restly::Associations::Base::Stubs
 
   # Stubs
   def stub(parent, attributes)

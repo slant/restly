@@ -1,4 +1,4 @@
-module Restly::Associations::Modifiers
+module Restly::Associations::Base::Modifiers
 
   # Modifiers
   def authorize(authorization = nil, association_class=self.association_class)

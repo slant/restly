@@ -8,6 +8,7 @@ module Restly::Associations
   autoload :HasManyThrough
   autoload :HasOne
   autoload :HasOneThrough
+  autoload :ClassMethods
 
   class AssociationsHash < HashWithIndifferentAccess
   end
@@ -51,7 +52,15 @@ module Restly::Associations
 
   def get_association(attr, options={})
     association = klass.reflect_on_resource_association(attr)
-    (@association_attributes ||= {}.with_indifferent_access)[attr] || set_association(attr, association.load(self, options))
+
+    if (stubbed = association.stub self, @association_attributes[attr]).present?
+      stubbed
+    elsif (loaded = association.load self, options).present?
+      loaded
+    else
+      association.collection? ? [] : {}
+    end
+
   end
 
   def respond_to_association?(m)

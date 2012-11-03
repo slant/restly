@@ -1,4 +1,4 @@
-module Restly::Associations::Loaders
+module Restly::Associations::Base::Loaders
 
   def load(parent, options)
 
@@ -14,8 +14,13 @@ module Restly::Associations::Loaders
 
   def load_collection(parent, association_class = self.association_class)
     raise Restly::Error::AssociationError, "Not a collection" unless collection?
-    return [] if embedded?
-    Restly::Proxies::Associations::Collection.new(association_class.all, parent)
+    collection = if embedded?
+                   []
+                 else
+                   association_class.all
+                 end
+
+    Restly::Proxies::Associations::Collection.new(collection, parent)
   end
 
   def load_instance(parent, association_class = self.association_class)
