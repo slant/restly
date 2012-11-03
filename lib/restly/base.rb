@@ -8,6 +8,7 @@ module Restly
     autoload :Includes
     autoload :MassAssignmentSecurity
     autoload :Fields
+    autoload :EmbeddedAssociations
 
     # Thread Local Accessor
     extend Restly::ThreadLocal
@@ -41,6 +42,7 @@ module Restly
 
     # Relationships
     include Restly::Associations
+    include Restly::EmbeddedAssociations
 
     # Set up the Attributes
     thread_local_accessor :current_token

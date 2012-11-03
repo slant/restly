@@ -13,6 +13,7 @@ module Restly
   autoload :Collection
   autoload :ControllerMethods
   autoload :Associations
+  autoload :EmbeddedAssociations
   autoload :NestedAttributes
   autoload :Error
   autoload :Connection

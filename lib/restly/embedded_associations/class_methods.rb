@@ -1,9 +1,4 @@
-module Restly::Associations::EmbeddableResources
-  extend ActiveSupport::Autoload
-
-  autoload :EmbeddedIn
-  autoload :EmbedsMany
-  autoload :EmbedsOne
+module Restly::Associations::EmbeddedAssociations
 
   # Embeds One
   def embeds_resource(name, options = {})
@@ -34,6 +29,18 @@ module Restly::Associations::EmbeddableResources
       set_association name, value
     end
 
+  end
+
+  def embedded_in(name, options={})
+    self.resource_associations[name] = association = EmbeddedIn.new(self, name, options)
+
+    define_method name do |options={}|
+      get_association(name, options)
+    end
+
+    define_method "#{name}=" do |value|
+      set_association name, value
+    end
   end
 
 end
