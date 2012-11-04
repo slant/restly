@@ -1,5 +1,11 @@
 module Restly::Configuration
 
+  def self.load_config(hash)
+    @config = hash.symbolize_keys
+  end
+
+  private
+
   def self.config
     defaults = {
       session_key: :access_token,
@@ -25,10 +31,6 @@ module Restly::Configuration
 
   def self.client_options
     config[:client_options].merge(config[:oauth_options])
-  end
-
-  def self.load_config(hash)
-    @config = hash.symbolize_keys
   end
 
   def self.method_missing(m, *args, &block)

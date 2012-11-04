@@ -72,10 +72,12 @@ module Restly
     # Run Active Support Load Hooks
     ActiveSupport.run_load_hooks(:restly, self)
 
-    delegate :client, to: :klass
-
     # Alias the class for delegation
-    def klass
+    def client
+      self.class.client
+    end
+
+    def resource
       self.class
     end
 

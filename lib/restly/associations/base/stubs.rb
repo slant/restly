@@ -6,6 +6,8 @@ module Restly::Associations::Base::Stubs
     collection? ? stub_collection(parent, attributes) : stub_instance(parent, attributes)
   end
 
+  private
+
   def stub_collection(parent, attributes)
     collection = attributes.map{ |item_attrs| association_class.new(item_attrs, loaded: embedded?) }
     Restly::Proxies::Associations::Collection.new(collection, parent)

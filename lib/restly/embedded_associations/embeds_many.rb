@@ -4,8 +4,4 @@ class Restly::EmbeddableResources::EmbedsMany < Restly::EmbeddedAssociations::Ba
     true
   end
 
-  def embedded?
-    true
-  end
-
 end

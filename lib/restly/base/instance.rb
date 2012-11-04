@@ -14,7 +14,7 @@ module Restly::Base::Instance
 
   included do
     attr_reader :init_options, :response
-    delegate :spec, to: :klass
+    delegate :spec, to: :resource
   end
 
   def initialize(attributes = nil, options = {})
@@ -43,6 +43,14 @@ module Restly::Base::Instance
     @loaded
   end
 
+  def connection
+    @connection || resource.connection
+  end
+
+  def connection=(val)
+    @connection = val
+  end
+
   def path=(val)
     @path = val
   end
@@ -52,11 +60,13 @@ module Restly::Base::Instance
     if response && response.response.env[:url]
       response.response.env[:url].path.gsub(/\.\w+$/,'')
     elsif respond_to?(:id) && id
-      [klass.path, id].join('/')
+      [self.class.path, id].join('/')
     else
-      klass.path
+      self.class.path
     end
   end
+
+  private
 
   def set_response(response)
     raise Restly::Error::InvalidResponse unless response.is_a? OAuth2::Response
@@ -74,18 +84,6 @@ module Restly::Base::Instance
     else
       parsed
     end
-  end
-
-  def connection
-    @connection || self.class.connection
-  end
-
-  def connection=(val)
-    @connection = val
-  end
-
-  def klass
-    self.class
   end
 
 end

@@ -7,8 +7,4 @@ class Restly::Associations::HasOne < Restly::Associations::Base
     super
   end
 
-  def collection?
-    true
-  end
-
 end

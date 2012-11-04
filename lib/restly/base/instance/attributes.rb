@@ -23,7 +23,7 @@ module Restly::Base::Instance::Attributes
       send("#{attr}_will_change!".to_sym) unless val == @attributes[attr.to_sym] || !@loaded
       @attributes[attr.to_sym] = val
 
-    elsif (association = klass.reflect_on_resource_association attr).present?
+    elsif (association = self.class.reflect_on_resource_association attr).present?
       set_association attr, association.stub(self, val) unless (@association_attributes ||= {}.with_indifferent_access)[attr].present?
 
     else
@@ -44,17 +44,6 @@ module Restly::Base::Instance::Attributes
 
   alias :attribute :read_attribute
 
-  def inspect
-    inspection = if @attributes
-                   fields.collect { |name|
-                     "#{name}: #{attribute_for_inspect(name)}"
-                   }.compact.join(", ")
-                 else
-                   "not initialized"
-                 end
-    "#<#{self.class} #{inspection}>"
-  end
-
   def has_attribute?(attr)
     attribute(attr)
   end
@@ -65,6 +54,17 @@ module Restly::Base::Instance::Attributes
 
   def respond_to?(m, include_private = false)
     respond_to_attribute?(m) || super
+  end
+
+  def inspect
+    inspection = if @attributes
+                   fields.collect { |name|
+                     "#{name}: #{attribute_for_inspect(name)}"
+                   }.compact.join(", ")
+                 else
+                   "not initialized"
+                 end
+    "#<#{self.class} #{inspection}>"
   end
 
   private

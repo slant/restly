@@ -1,5 +1,7 @@
 module Restly::EmbeddedAssociations::ClassMethods
 
+  private
+
   # Embeds One
   def embeds_resource(name, options = {})
     exclude_field(name) if ancestors.include?(Restly::Base)

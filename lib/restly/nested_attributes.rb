@@ -12,6 +12,8 @@ module Restly::NestedAttributes
 
   end
 
+  private
+
   # One To One Association
   def assign_nested_attributes_for_one_to_one_resource_association(association_name, attributes, assignment_opts = {})
     options = self.nested_attributes_options[association_name]

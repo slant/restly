@@ -8,6 +8,8 @@ class Restly::Proxies::WithPath < Restly::Proxies::Base
     adjust_path_from_options! if @options.present?
   end
 
+  private
+
   def adjust_path_from_options!
     prepend = if @options[:prepend]
                 @options[:prepend].gsub(/^([^\/])/, "/\\1").gsub(/\/$/, "")

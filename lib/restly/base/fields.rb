@@ -18,6 +18,8 @@ module Restly::Base::Fields
 
   module SharedMethods
 
+    private
+
     def set_field(attr)
       base = self.is_a?(Class) ? self : singleton_class
       unless base.send :instance_method_already_implemented?, attr
@@ -29,6 +31,8 @@ module Restly::Base::Fields
   end
 
   module ClassMethods
+
+    private
 
     def field(attr)
       if attr.is_a?(Hash) && attr[:from_spec]

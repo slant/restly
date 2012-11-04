@@ -21,8 +21,4 @@ module Restly::Base::Resource
     end
   end
 
-  def resource
-    self
-  end
-
 end

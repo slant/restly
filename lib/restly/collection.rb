@@ -39,13 +39,13 @@ class Restly::Collection < Array
 
   alias :collect :map
 
-  def paginate(opts={})
-    @pagination_opts = opts
-    collection = self.dup
-    collection.extend(Restly::Collection::Pagination)
-    return page(opts[:page]) unless opts[:page] == current_page && opts[:per_page] == response_per_page
-    collection
-  end
+  #def paginate(opts={})
+  #  @pagination_opts = opts
+  #  collection = self.dup
+  #  collection.extend(Restly::Collection::Pagination)
+  #  return page(opts[:page]) unless opts[:page] == current_page && opts[:per_page] == response_per_page
+  #  collection
+  #end
 
   def <<(instance)
     raise Restly::Error::InvalidObject, "Object is not an instance of #{resource}" unless accepts?(instance)

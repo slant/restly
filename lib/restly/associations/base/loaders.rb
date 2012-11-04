@@ -12,6 +12,8 @@ module Restly::Associations::Base::Loaders
     collection? ? association.load_collection(parent) : association.load_instance(parent)
   end
 
+  private
+
   def load_collection(parent, association_class = self.association_class)
     raise Restly::Error::AssociationError, "Not a collection" unless collection?
     collection = if embedded?

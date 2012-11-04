@@ -1,7 +1,7 @@
 class Restly::EmbeddedAssociations::Base < Restly::Associations::Base
 
-  def nested?
-    false
+  def embedded?
+    true
   end
 
 end
