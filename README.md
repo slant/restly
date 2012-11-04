@@ -100,15 +100,21 @@ In restly interacting with objects is familiar.
 
 __Getting the Collection:__
 
-```MyModel.all```
+```ruby
+MyModel.all
+```
 
 __Finding an Instance:__
 
-```my_instance = MyModel.find(1)```
+```ruby
+my_instance = MyModel.find(1)
+```
 
 __Updating an Instance:__
 
-```my_instance.update_attributes({my_attr: 'val'})```
+```ruby
+my_instance.update_attributes({my_attr: 'val'})
+```
 
 or
 
@@ -121,7 +127,7 @@ __Creating an Instance__
 
 ```
 my_instance
-
+```
 
 ## Contributing
 
