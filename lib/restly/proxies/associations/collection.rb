@@ -2,9 +2,9 @@ class Restly::Proxies::Associations::Collection < Restly::Proxies::Base
 
   attr_reader :parent, :joiner
 
-  def initialize(array, parent, joiner=nil)
-    array.map!{ |instance| Restly::Proxies::Associations::Instance.new(instance, parent, joiner) }
-    super(array)
+  def initialize(collection, parent, joiner=nil)
+    collection.map!{ |instance| Restly::Proxies::Associations::Instance.new(instance, parent, joiner) }
+    super(collection)
     @parent = parent
     @joiner = joiner
   end

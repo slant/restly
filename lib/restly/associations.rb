@@ -58,7 +58,7 @@ module Restly::Associations
     elsif (loaded = association.load self, options).present?
       loaded
     else
-      association.collection? ? [] : {}
+      association.build(self)
     end
 
   end

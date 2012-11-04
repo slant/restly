@@ -10,7 +10,7 @@ class Restly::Collection < Array
 
   attr_reader :resource
 
-  def initialize(resource, array, opts={})
+  def initialize(resource, array=[], opts={})
     @resource = resource
     @response = opts[:response]
     @connection
@@ -29,7 +29,8 @@ class Restly::Collection < Array
   end
 
   def create(*args)
-    self << super
+    self << instance = super
+    instance
   end
 
   def map(*args)

@@ -16,12 +16,4 @@ module Restly::Associations::Base::Stubs
     Restly::Proxies::Associations::Instance.new(instance, parent)
   end
 
-  # Build
-  def build(parent, attributes = nil, options = {})
-    raise NoMethodError, "Build not available for collection." if collection?
-    instance = association_class.new(attributes, options)
-    instance.write_attribute("#{@owner.resource_name}_id", parent.id) if association_class.method_defined?("#{@owner.resource_name}_id")
-    Restly::Proxies::Associations::Instance.new(instance, parent)
-  end
-
 end

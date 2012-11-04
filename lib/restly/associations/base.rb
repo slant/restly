@@ -3,11 +3,13 @@ class Restly::Associations::Base
 
   autoload :Loaders
   autoload :Stubs
+  autoload :Builders
   autoload :Modifiers
   autoload :Conditionals
 
   include Loaders
   include Stubs
+  include Builders
   include Modifiers
   include Conditionals
 
