@@ -21,7 +21,7 @@ module Restly::Base::Instance::Attributes
   def write_attribute(attr, val)
     if fields.include?(attr)
       send("#{attr}_will_change!".to_sym) unless val == @attributes[attr.to_sym] || !@loaded
-      @attributes[attr.to_sym] = val
+      @attributes[attr.to_sym] = Attribute.new(val)
 
     elsif (association = self.class.reflect_on_resource_association attr).present?
       set_association attr, association.stub(self, val) unless (@association_attributes ||= {}.with_indifferent_access)[attr].present?
@@ -93,6 +93,39 @@ module Restly::Base::Instance::Attributes
     else
       super(m, *args, &block)
     end
+  end
+
+  class Attribute < Restly::Proxies::Base
+
+    def initialize(attr)
+      @attr = attr
+      case @attr
+        when String
+          type_convert_string
+        end
+      super(@attr)
+    end
+
+    private
+
+    def type_convert_string
+      time =    (@attr.to_time rescue nil)
+      date =    (@attr.to_date rescue nil)
+      # int  =    (@attr.to_i    rescue nil)
+      # flt  =    (@attr.to_f    rescue nil)
+      @attr = if time.try(:iso8601) == @attr
+                time
+              elsif date.try(:to_s) == @attr
+                date
+              #elsif int.try (:to_s) == @attr
+              #  int
+              #elsif flt.try (:to_s) == @attr
+              #  flt
+              else
+                @attr
+      end
+    end
+
   end
 
 end
