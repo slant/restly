@@ -1,4 +1,4 @@
-require "colorize"
+require "colorize" if defined?(IRB)
 require "active_support"
 require "restly/version"
 require "oauth2"

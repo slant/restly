@@ -3,7 +3,7 @@ module Restly::Error
   class StandardError < ::StandardError
 
     def message
-      super.red
+      defined?(IRB) ? super.red : super
     end
 
   end
