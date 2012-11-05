@@ -10,11 +10,8 @@ module Restly::Error
 
   errors = %w{
     RecordNotFound
-    WrongResourceType
-    InvalidParentAssociation
-    InvalidJoinerAssociation
+    InvalidClient
     InvalidObject
-    InvalidToken
     InvalidConnection
     MissingId
     InvalidSpec

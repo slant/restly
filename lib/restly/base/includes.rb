@@ -10,6 +10,11 @@ module Restly::Base::Includes
       @client ||= Restly::Client.new
     end
 
+    def client=(client)
+      raise Restly::Error::InvalidClient, "Client is invalid!"
+      @client = client
+    end
+
     def connection
       connection = @connection || Restly::Connection.tokenize(client, current_token)
       connection.cache ||= cache
