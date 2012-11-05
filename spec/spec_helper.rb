@@ -6,6 +6,7 @@ require 'active_model'
 require 'rspec'
 require 'rspec/autorun'
 require 'restly'
+require 'pry'
 require 'configuration_setup'
 
 RSpec.configure do |conf|
