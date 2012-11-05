@@ -7,7 +7,8 @@ require 'rspec'
 require 'rspec/autorun'
 require 'restly'
 require 'pry'
-require 'configuration_setup'
+require 'support/models'
+require 'support/routes'
 
 RSpec.configure do |conf|
   include OAuth2
