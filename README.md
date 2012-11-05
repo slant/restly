@@ -120,7 +120,7 @@ or
 
 ```ruby
 my_instance.my_attr = 'val'
-my_instnace.save
+my_instance.save
 ```
 
 __Creating an Instance__
