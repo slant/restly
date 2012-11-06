@@ -1,3 +1,5 @@
+require "delegate"
+
 class Restly::Proxies::Base < SimpleDelegator
 
   delegate :is_a?, :kind_of?, to: :__getobj__

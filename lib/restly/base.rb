@@ -64,9 +64,9 @@ module Restly
     # Set Defaults on Inheritance
     inherited do
       field :id
-      self.resource_name          = name.gsub(/.*::/,'').underscore
-      self.path                   = resource_name.pluralize
-      self.params                 = params.dup
+      self.resource_name      = name.gsub(/.*::/,'').underscore if name.present?
+      self.path               = resource_name.pluralize
+      self.params             = params.dup
     end
 
     # Run Active Support Load Hooks

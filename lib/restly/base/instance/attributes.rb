@@ -1,3 +1,5 @@
+require "colorize"
+
 module Restly::Base::Instance::Attributes
 
   def update_attributes(attributes)
