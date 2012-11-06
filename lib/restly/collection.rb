@@ -1,12 +1,12 @@
 class Restly::Collection < Array
-  # extend ActiveSupport::Autoload
+  extend ActiveSupport::Autoload
+  autoload :Pagination
+
   include Restly::Base::Resource::Finders
   include Restly::Base::Resource::BatchActions
   include Restly::Base::GenericMethods
 
   delegate :resource_name, :new, :client, to: :resource
-
-  # autoload :Pagination
 
   attr_reader :resource
 

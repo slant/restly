@@ -1,7 +1,7 @@
 require "rspec"
 require "spec_helper"
 
-describe Restly::Associations::EmbeddableResources::EmbedsMany do
+describe Restly::EmbeddedAssociations::EmbedsMany do
 
   it "should have specs"
   
