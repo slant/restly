@@ -11,7 +11,7 @@ class Restly::Client < OAuth2::Client
     self.options = Restly::Configuration.client_options.merge(opts)
     self.ssl = opts.delete(:ssl) || Restly::Configuration.ssl
     self.format = @format = opts.delete(:format) || Restly::Configuration.default_format
-    self.options[:connection_build] = block
+    self.options[:connection_build] ||= block
   end
 
   def ssl=(val)
