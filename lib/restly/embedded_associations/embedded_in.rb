@@ -1,4 +1,4 @@
-class Restly::EmbeddableResources::EmbeddedIn < Restly::EmbeddedAssociations::Base
+class Restly::EmbeddedAssociations::EmbeddedIn < Restly::EmbeddedAssociations::Base
 
   def nested?
     true

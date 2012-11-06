@@ -1,3 +1,3 @@
-class Restly::EmbeddableResources::EmbedsOne < Restly::EmbeddedAssociations::Base
+class Restly::EmbeddedAssociations::EmbedsOne < Restly::EmbeddedAssociations::Base
 
 end
