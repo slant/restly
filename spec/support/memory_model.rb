@@ -11,7 +11,7 @@ class MemoryModel < Hash
 
   class << self
 
-    delegate :first, :last, :[], to: :collection
+    delegate *(Array.instance_methods - Object.instance_methods), to: :collection
 
     def inherited(subclass)
       subclass.fields = {}

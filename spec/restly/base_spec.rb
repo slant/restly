@@ -3,10 +3,7 @@ require "pry"
 
 describe Restly::Base do
 
-  subject do
-    Restly::Base.stub(:name) { 'RestlyTestObject' }
-    Class.new(Restly::Base)
-  end
+  include_context "sample_class"
 
   it "should have specs"
 

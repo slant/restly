@@ -1,135 +1,92 @@
 require "faraday_simulation"
-
-class Requester
-
-  def initialize(env, &block)
-    @env = env
-    @action = instance_eval(&block)
-  end
-
-  def response
-    case format
-      when "json"
-        @action.to_json
-      when "xml"
-        @action.to_xml
-      else
-        @action.to_param
-    end
-  end
-
-  private
-
-  def format
-    @env[:params]['format']
-  end
-
-  def model
-    @env[:params]['model'].try(:classify).try(:constantize)
-  end
-
-  def data
-
-  end
-
-end
+require "faraday_middleware"
+require "support/requester"
 
 # Test Connection Object
 connection = ->(builder){
+  builder.use Faraday::Request::UrlEncoded
+
+  builder.response :xml,  :content_type => /\bxml$/
+  builder.response :json, :content_type => /\bjson$/
+
   builder.use FaradaySimulation::Adapter do |stub|
 
-    # Sample Objects
-    stub.get '/:model.json' do
-      [200, {}, model.to_json ]
+    # Associated
+    stub.get '/:model.:format' do |env|
+      req = Requester.new(env) { model.all }
+      [200, req.response_headers, req.response ]
     end
 
     stub.post '/:model.:format' do |env|
       req = Requester.new(env) { model.new(data) }
-      [200, {}, req.response ]
+      [200, req.response_headers, req.response ]
     end
-    #
-    #stub.get '/:model/:id.json' do
-    #  [200, {}, env[:params]['model'].classify.constantize.find(id: env[:params]['id']).to_json ]
-    #end
-    #
-    #stub.put '/:model/:id.json' do
-    #  [200, {}, env[:params]['model'].classify.constantize.find(id: env[:params]['id']).update(env[:params]['contact']).to_json ]
-    #end
-    #
-    #stub.delete '/contacts/1.json' do
-    #  [200, {}, Contact]
-    #end
-    #
-    #stub.options("/contacts") do
-    #  [200, {}, Contact.spec.to_json]
-    #end
-    #
-    ## Associated Posts
-    #stub.get '/contacts/1/posts.json' do
-    #  [200, {}, Post.all.to_json]
-    #end
-    #
-    #stub.post '/contacts/1/posts.json' do
-    #  [200, {}, Post.new.sample_object.to_json]
-    #end
-    #
-    #stub.get '/contacts/1/posts/1.json' do
-    #  [200, {}, Post.new.sample_object.to_json]
-    #end
-    #
-    #stub.put '/contacts/1/posts/1.json' do
-    #  [200, {}, Post.new.to_json]
-    #end
-    #
-    #stub.delete '/contacts/1/posts/1.json' do
-    #  [200, {}, Post.new.to_json]
-    #end
-    #
-    #stub.request(:options, "/contacts/1/posts.json") do
-    #  [200, {}, Post.spec.to_json]
-    #end
-    #
-    ## Standalone Posts
-    ## Sample Objects
-    #stub.get '/posts.json' do
-    #  [200, {}, Post.all.to_json ]
-    #end
-    #
-    #stub.post '/contacts.json' do
-    #  [200, {}, Post.new(id: 1).to_json ]
-    #end
-    #
-    #stub.get '/contacts/1.json' do
-    #  [200, {}, Post.new(id: 1).to_json ]
-    #end
-    #
-    #stub.put '/contacts/1.json' do
-    #  [200, {}, Post.new(id: 1).to_json ]
-    #end
-    #
-    #stub.delete '/contacts/1.json' do
-    #  [200, {}, Post.success.to_json]
-    #end
-    #
-    #stub.request(:options, "/contacts") do
-    #  [200, {}, Post.spec.to_json]
-    #end
 
+    stub.get '/:model/:id.:format' do |env|
+      req = Requester.new(env) { model.find(params[:id]) }
+      [200, req.response_headers, req.response ]
+    end
+
+    stub.put '/:model/:id.:format' do |env|
+      req = Requester.new(env) { model.find(params[:id]).update(data) }
+      [200, req.response_headers, req.response ]
+    end
+
+    stub.delete '/:model/:id.:format' do |env|
+      req = Requester.new(env) { model.find(params[:id]).delete }
+      [200, req.response_headers, req.response ]
+    end
+
+    stub.options '/:model/:id' do |env|
+      env[:params]["format"] = "json"
+      req = Requester.new(env) { model.spec }
+      [200, req.response_headers, req.response ]
+    end
+
+    # Associated
+    stub.get '/:parent_model/:parent_id/:model.:format' do |env|
+      req = Requester.new(env) { model.all }
+      [200, req.response_headers, req.response ]
+    end
+
+    stub.post '/:parent_model/:parent_id/:model.:format' do |env|
+      req = Requester.new(env) { model.new(data) }
+      [200, req.response_headers, req.response ]
+    end
+
+    stub.get '/:parent_model:model/:parent_id/:id.:format' do |env|
+      req = Requester.new(env) { model.find(params[:id]) }
+      [200, req.response_headers, req.response ]
+    end
+
+    stub.put '/:parent_model/:parent_id:model/:id.:format' do |env|
+      req = Requester.new(env) { model.find(params[:id]).update(data) }
+      [200, req.response_headers, req.response ]
+    end
+
+    stub.delete '/:parent_model/:parent_id/:model/:id.:format' do |env|
+      req = Requester.new(env) { model.find(params[:id]).delete }
+      [200, req.response_headers, req.response ]
+    end
+
+    stub.options '/:parent_model/:parent_id/:model/:id' do |env|
+      env[:params]["format"] = "json"
+      req = Requester.new(env) { model.spec }
+      [200, req.response_headers, req.response ]
+    end
 
   end
 }
-
-tc = Faraday::Connection.new &connection
-
-binding.pry
 
 Restly::Configuration.load_config(
   {
     site: 'http://fakesi.te',
     cache: false,
     use_oauth: true,
-    connection_build: connection,
-    outh_options: {
+    client_options: {
+      connection_build: connection
+    },
+    oauth_options: {
       client_id: 'default_id',
       client_secret: 'default_secret',
       default_format: 'json'

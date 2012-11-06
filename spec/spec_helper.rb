@@ -6,10 +6,18 @@ require 'active_model'
 require 'rspec'
 require 'rspec/autorun'
 require 'restly'
-require 'pry'
 require 'support/models'
 require 'support/routes'
 
+class Post < Restly::Base
+  field :body
+  field :created_at
+  field :updated_at
+end
+
+Object.send :define_method, :logger do
+  @logger ||= Logger.new(STDOUT)
+end
+
 RSpec.configure do |conf|
-  include OAuth2
 end
