@@ -18,7 +18,7 @@ module Restly::Base::Includes
     def connection
       connection = @connection || Restly::Connection.tokenize(client, current_token)
       connection.cache ||= cache
-      connection.cache_options ||= cache_options
+      connection.cache_options = cache_options unless connection.cache_options.present?
       connection
     end
 
