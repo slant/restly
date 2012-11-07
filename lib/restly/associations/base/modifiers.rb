@@ -13,10 +13,11 @@ module Restly::Associations::Base::Modifiers
 
   def with_path(parent, path = nil, association_class=self.association_class)
     duplicate = self.dup
+    parent_path = parent.respond_to?(:path) ? parent.path : nil
     duplicate.instance_variable_set :@association_class, if path
                                                            association_class.with_path(path)
                                                          else
-                                                           association_class.with_path(association_resource_name, prepend: parent.path)
+                                                           association_class.with_path(association_resource_name, prepend: parent_path)
                                                          end
     duplicate
   end

@@ -4,7 +4,12 @@ class Restly::Associations::BelongsTo < Restly::Associations::Base
     if polymorphic
       set_polymorphic_class(parent).load(parent, options)
     else
-      super(parent, options)
+      # Merge Options
+      options.reverse_merge!(self.options)
+
+      # Authorize and Set Path
+      association = authorize(options[:authorize])
+      association.load_instance(parent)
     end
   end
 
