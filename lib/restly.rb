@@ -22,6 +22,12 @@ module Restly
   autoload :Client
   autoload :ConcernedInheritance
 
+  if defined?(Rails::Console)
+    def self.login(username, password)
+      Base.current_token = { access_token: Client.new.password.get_token(username, password).token }
+    end
+  end
+
 end
 
 require 'restly/railtie' if Object.const_defined?('Rails')

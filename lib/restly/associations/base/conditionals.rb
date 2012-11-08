@@ -1,7 +1,5 @@
 module Restly::Associations::Base::Conditionals
 
-  private
-
   # Conditionals
   def valid?(val)
     valid_instances = Array.wrap(val).reject{ |item| item.resource_name == @association_class.resource_name }.empty?

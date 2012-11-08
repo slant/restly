@@ -56,18 +56,18 @@ module Restly::Associations
   private
 
   def association_attributes
-    @association_attributes ||= {}
+    @association_attributes ||= {}.with_indifferent_access
   end
 
   def set_association(attr, val)
     association = self.class.reflect_on_resource_association(attr)
     association.valid?(val)
     association_attributes[attr] = val
+    puts association_attributes
   end
 
   def get_association(attr, options={})
     association = self.class.reflect_on_resource_association(attr)
-
     if (stubbed = association.stub self, association_attributes[attr]).present?
       stubbed
     elsif (loaded = association.load self, options).present?

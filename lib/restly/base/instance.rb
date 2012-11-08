@@ -22,7 +22,7 @@ module Restly::Base::Instance
     @init_options = options
     @attributes = HashWithIndifferentAccess.new
     @association_cache = {}
-    @association_attributes = {}
+    @association_attributes = {}.with_indifferent_access
     @aggregation_cache = {}
     @attributes_cache = {}
     @previously_changed = {}

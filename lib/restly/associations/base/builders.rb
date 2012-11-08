@@ -12,8 +12,6 @@ module Restly::Associations::Base::Builders
     collection? ? association.build_collection(parent) : association.build_instance(parent, attributes)
   end
 
-  private
-
   def build_instance(parent, attributes)
     instance = association_class.new(attributes, options)
     instance.write_attribute("#{@owner.resource_name}_id", parent.id) if association_class.method_defined?("#{@owner.resource_name}_id")
