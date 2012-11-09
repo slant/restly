@@ -6,7 +6,6 @@ module Restly
     autoload :Instance
     autoload :GenericMethods
     autoload :Includes
-    autoload :MassAssignmentSecurity
     autoload :Fields
     autoload :EmbeddedAssociations
 
@@ -38,7 +37,6 @@ module Restly
     include Includes
     include Instance
     include Fields
-    include MassAssignmentSecurity
 
     # Relationships
     include Restly::Associations

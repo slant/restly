@@ -60,7 +60,7 @@ module Restly::Base::Instance::Attributes
 
   def inspect
     inspection = if @attributes
-                   fields.collect { |name|
+                   fields.map { |name|
                      "#{name}: #{attribute_for_inspect(name)}"
                    }.compact.join(", ")
                  else

@@ -15,6 +15,11 @@ module Restly::Base::Includes
       @client = client
     end
 
+    def has_specification
+      self.fields = Restly::Base::Resource::Specification.new(self).fields
+      (self._accessible_attributes ||= {})[:default] = Restly::Base::Resource::Specification.new(self).accessible_attributes
+    end
+
     def connection
       connection = @connection || Restly::Connection.tokenize(client, current_token)
       connection.cache ||= cache

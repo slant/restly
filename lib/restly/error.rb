@@ -15,6 +15,7 @@ module Restly::Error
     InvalidConnection
     MissingId
     InvalidSpec
+    InvalidField
     AssociationError
   }
 

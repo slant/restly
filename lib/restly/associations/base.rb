@@ -13,7 +13,7 @@ class Restly::Associations::Base
   include Modifiers
   include Conditionals
 
-  attr_reader :name, :association_class, :namespace, :polymorphic, :options
+  attr_reader :name, :namespace, :polymorphic, :options
 
   def initialize(owner, name, options={})
     @name = name
@@ -21,8 +21,11 @@ class Restly::Associations::Base
     @polymorphic = options.delete(:polymorphic)
     options[:class_name] ||= name.to_s.classify
     @owner = owner
-    @association_class = [@namespace, options.delete(:class_name)].select(&:present?).join('::').constantize
     @options = options
+  end
+
+  def association_class
+    [@namespace, options(:class_name)].select(&:present?).join('::').constantize
   end
 
   private
