@@ -2,13 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ff89b21f-5fe4-4538-a459-9d18f6d5466e" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/restly.iml" afterPath="$PROJECT_DIR$/.idea/restly.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/restly.rb" afterPath="$PROJECT_DIR$/restly.rb" />
     </list>
     <ignored path="restly.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/restly.rb" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352755265785" ignored="false" />
+    <file path="/restly.rb" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352762922203" ignored="false" />
+    <file path="/restly.yml" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352755823502" ignored="false" />
+    <file path="$PROJECT_DIR$/../itriage-admin/config/restly.yml" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352755823502" ignored="false" />
     <file path="/generate" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352755137956" ignored="false" />
     <file path="/a.dummy" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352748640550" ignored="false" />
     <file path="/conditionals.rb" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352748579315" ignored="false" />
@@ -16,8 +20,6 @@
     <file path="$PROJECT_DIR$/../itriage-admin/config/app_config.yml" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352748135201" ignored="false" />
     <file path="/Gemfile" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352747599004" ignored="false" />
     <file path="$PROJECT_DIR$/../itriage-auth/Gemfile" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352747599004" ignored="false" />
-    <file path="$PROJECT_DIR$/../itriage-admin/config/restly.yml" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352746868973" ignored="false" />
-    <file path="/restly.yml" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352746867765" ignored="false" />
     <file path="/Dummy.txt" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352746242715" ignored="false" />
     <file path="$PROJECT_DIR$/../itriage-auth/config/database.yml" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352746127144" ignored="false" />
     <file path="/database.yml" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352746127144" ignored="false" />
@@ -135,7 +137,7 @@
       <file leaf-file-name="restly.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/restly.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="46" selection-start="91" selection-end="91" vertical-scroll-proportion="0.053872053">
+            <state line="200" column="26" selection-start="6349" selection-end="6349" vertical-scroll-proportion="0.94660735">
               <folding />
             </state>
           </provider>
@@ -144,7 +146,7 @@
       <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="0" selection-start="1028" selection-end="1028" vertical-scroll-proportion="-0.64">
+            <state line="141" column="0" selection-start="25584" selection-end="25584" vertical-scroll-proportion="-17.64">
               <folding />
             </state>
           </provider>
@@ -195,6 +197,22 @@
     <option name="y" value="22" />
     <option name="width" value="1680" />
     <option name="height" value="1024" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>CSS</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -252,7 +270,7 @@
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="options.lastSelected" value="preferences.pluginManager" />
+    <property name="options.lastSelected" value="Errors" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/lib" />
     <property name="FullScreen" value="false" />
     <property name="options.splitter.details.proportions" value="0.2" />
@@ -417,10 +435,10 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32901832" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32901832" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32901832" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18053855" sideWeight="0.67098165" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18053855" sideWeight="0.67098165" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -498,14 +516,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="0" selection-start="1028" selection-end="1028" vertical-scroll-proportion="-0.64">
+        <state line="141" column="0" selection-start="25584" selection-end="25584" vertical-scroll-proportion="-17.64">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/restly.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="46" selection-start="91" selection-end="91" vertical-scroll-proportion="0.053872053">
+        <state line="200" column="26" selection-start="6349" selection-end="6349" vertical-scroll-proportion="0.94660735">
           <folding />
         </state>
       </provider>

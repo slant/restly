@@ -1,1 +1,144 @@
-<!DOCTYPE html>  <html> <head>   <title>restly.rb</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               restly.rb             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <h3>A Restful Object Document Mapper (ODM)</h3>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Restly connects your REST API to Ruby Models</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
+<!DOCTYPE html>  <html> <head>   <title>restly.rb</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               restly.rb             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <h3>A Restful Object Document Mapper (ODM)</h3>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Restly provides an easy to use mechanism to connect your RESTful APIs to Ruby Models.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h2>Configuration</h2>
+
+<h3>The Rails Way</h3>
+
+<p>When you are using rails restly comes with a configuration of generator to help you get started.</p>
+
+<p>You can run <code>$ rails g restly:config</code> Which will generate the following config.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="o">&lt;&lt;</span><span class="no">YAML</span> <span class="c1"># config/restly.yml</span>
+
+<span class="sh">development:</span>
+<span class="sh">  default_format:   json</span>
+<span class="sh">  session_key:      :access_token</span>
+<span class="sh">  load_middleware:  true # Load the rails middleware to auto-authenticate oauth sessions.</span>
+<span class="sh">  site:             http://api.example.com</span>
+<span class="sh">  use_oauth:        false # Set to true, and set the information below if you wish to use oauth.</span>
+<span class="sh">  oauth_options:</span>
+<span class="sh">    client_id:        %client_id%</span>
+<span class="sh">    client_secret:    %client_secret%</span>
+<span class="sh">  cache:            true # Set to true, and set the information below if you wish to cache objects.</span>
+<span class="sh">  cache_options:</span>
+<span class="sh">    expires_in:       30</span>
+
+<span class="no">YAML</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h3>The Ruby Way</h3>
+
+<p>If you are not using rails, then you can load the configuration using restly's config block.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="no">Restly</span><span class="o">.</span><span class="n">config</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">default_format</span> <span class="o">=</span> <span class="ss">:json</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">site</span>           <span class="o">=</span> <span class="s1">&#39;http://api.example.com&#39;</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">cache</span>          <span class="o">=</span> <span class="kp">true</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">cache_options</span>  <span class="o">=</span> <span class="p">{</span> <span class="n">expires_in</span><span class="p">:</span> <span class="mi">30</span> <span class="p">}</span>
+<span class="k">end</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h2>Models</h2>
+
+<blockquote>
+  <p><strong><em>Restly Extends from Active Model, which means out of the box you get rails like validations, accessible attributes
+  and more. See <a href="http://api.rubyonrails.org/classes/ActiveModel.html">ActiveModel</a> for more detail.</em></strong></p>
+</blockquote>
+
+<p>Models can be generated by hand or by using the rails generator:</p>
+
+<p><code>rails g restly:model</code></p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nc">Contact</span> <span class="o">&lt;</span> <span class="no">Restly</span><span class="o">::</span><span class="no">Base</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h4>Model Config Overrides</h4>
+
+<p>Site and other configuration may be overridden on a per model basis</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nb">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;/v1/contacts&quot;</span> <span class="c1"># Path with try to be determined by the resource_name by default.</span>
+  <span class="nb">self</span><span class="o">.</span><span class="n">site</span>   <span class="o">=</span> <span class="s2">&quot;http://api.example.com&quot;</span>
+  <span class="nb">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="ss">:json</span>
+  <span class="nb">self</span><span class="o">.</span><span class="n">cache</span>  <span class="o">=</span> <span class="kp">true</span>
+  <span class="nb">self</span><span class="o">.</span><span class="n">cache_options</span> <span class="o">=</span> <span class="p">{</span> <span class="n">expires_in</span><span class="p">:</span> <span class="mi">15</span><span class="o">.</span><span class="n">minutes</span> <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h3>Fields</h3>
+
+<p>A Model must be configured with fields. This will ensure, no invalid data gets sent back to the API. The <strong>id</strong> field is required and therefore always assumed.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="n">field</span> <span class="ss">:first_name</span>
+  <span class="n">field</span> <span class="ss">:middle_name</span>
+  <span class="n">field</span> <span class="ss">:last_name</span>
+  <span class="n">field</span> <span class="ss">:age</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <h3>Associations</h3>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <h4>has_many_resources</h4>
+
+<p>The foreign key lies on the child resources, therefor the path to find the resources is determined in a restful nature.</p>
+
+<ul>
+<li><strong>the call:</strong>   <code>contact.phone_numbers</code>  </li>
+<li><strong>results in:</strong> <code>GET http://api.example.com/v1/contacts/phone_numbers</code></li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="n">has_many_resources</span> <span class="ss">:phone_numbers</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <h4>has_many_resources</h4>
+
+<p>The foreign key lies on the child resource, therefor the path to find the resource is determined in a restful nature.</p>
+
+<ul>
+<li><strong>the call:</strong>   <code>contact.address</code>  </li>
+<li><strong>results in:</strong> <code>GET http://api.example.com/v1/contacts/address</code></li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="n">has_one_resource</span> <span class="ss">:address</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <h4>belongs_to_resource</h4>
+
+<p>In this case the foreign key is present so we can do a direct lookup:</p>
+
+<ul>
+<li><strong>given:</strong> <code>account_id = 4</code>  </li>
+<li><strong>the call</strong>: <code>contact.account</code>  </li>
+<li><strong>results in:</strong> <code>GET http://api.example.com/v1/accounts/1</code></li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="n">belongs_to_resource</span> <span class="ss">:account</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <h4>Associations with a custom class:</h4>
+
+<p>Associations can be given a custom class by providing the class directly or by providing the classes name:</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="n">has_many_resources</span> <span class="ss">:phone_numbers</span><span class="p">,</span> <span class="n">class</span><span class="p">:</span> <span class="no">CustomPhoneNumber</span>
+  <span class="n">has_many_resources</span> <span class="ss">:phone_numbers</span><span class="p">,</span> <span class="n">class_name</span><span class="p">:</span> <span class="s2">&quot;CustomPhoneNumber&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <h4>Associations with a custom foreign key:</h4>
+
+<p>Associations can be given a custom foreign key by providing the <code>foreign_key</code> option.</p>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="n">has_many_resources</span> <span class="ss">:phone_numbers</span><span class="p">,</span> <span class="n">foreign_key</span><span class="p">:</span> <span class="s2">&quot;contact_id&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <h3>Nested Attributes</h3>
+
+<p>You can accept nested attributes for associations and they will be formatted properly before being sent off to the api.</p>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="n">accepts_nested_attributes_for_resource</span> <span class="ss">:account</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <h4>Rewrite Attribute</h4>
+
+<p>If you are not sending to a rails application you can specify the rewritten attribute.</p>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="n">accepts_nested_attributes_for_resource</span> <span class="ss">:account</span><span class="p">,</span> <span class="n">rewrite_to</span><span class="p">:</span> <span class="ss">:account_data</span>
+  
+
+<span class="k">end</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <h3>Embedded Associations</h3>
+
+<p>Sometimes an API may only return data embedded in other objects. In order to facilitate this restly has embedded
+associations. This is for models that can be only accessed within other objects.</p>             </td>             <td class="code">               <div class="highlight"><pre>  </pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p><strong><em>NOTE: When a object is a normal relationship it may also behave like it is embedded, only use embedded associations
+that can't be unless its embedded in another object.</em></strong></p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nc">Contact</span> <span class="o">&lt;</span> <span class="no">Restly</span><span class="o">::</span><span class="no">Base</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <h4>embeds_resource</h4>
+
+<p>When an object embeds a single resource.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="n">embeds_resource</span> <span class="ss">:role</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <h4>embeds_resource</h4>
+
+<p>When an object embeds a collection of resources.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="n">embeds_resources</span> <span class="ss">:permissions</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <h4>embedded_in</h4>
+
+<p>Makes an object embedded, marking it inaccessible by any direct path.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="n">embedded_in</span> <span class="ss">:account</span> </pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <h3>Restful Spec</h3>
+
+<p>Restly is compatible with <a href="http://github.com/jwaldrip/restful_spec">restful_spec</a>, which allows for API specification
+over the HTTP <strong>OPTIONS</strong> method. This will take care of your fields and accessible attributes automatically.</p>
+
+<p><em>Only the API application needs <strong>restful_spec</strong>. Since your app using restly is ingesting from the API,  there is no need
+to put <strong>restful_spec</strong> in the Gemfile</em>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">end</span>  
+
+<span class="k">class</span> <span class="nc">Contact</span> <span class="o">&lt;</span> <span class="no">Restly</span><span class="o">::</span><span class="no">Base</span>
+  
+  <span class="n">has_specification</span>
+
+<span class="k">end</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <h3>Restly Associations for All</h3>
+
+<p>You can include the restly associations for any ruby class. Include the module and you will get all the non embedded
+associations.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  
+  <span class="kp">include</span> <span class="no">Restly</span><span class="o">::</span><span class="no">Associations</span> 
+  
+<span class="k">end</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <h2>Accessing your Models</h2>
+
+<p>Once you have your models defined, accessing things are pretty familiar.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <h3>The Basics</h3>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Get a collection...</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="n">contacts</span> <span class="o">=</span> <span class="no">Contact</span><span class="o">.</span><span class="n">all</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <p>Find an Object...</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="n">contact</span> <span class="o">=</span> <span class="no">Contact</span><span class="o">.</span><span class="n">find</span></pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <p>Get an Association...</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="n">contact</span><span class="o">.</span><span class="n">phone_numbers</span>
+<span class="n">contact</span><span class="o">.</span><span class="n">address</span></pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <h3>Modifiers</h3>
+
+<p>Modifiers change the outbound request. These can be added to any call within a restly query.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="no">Model</span><span class="o">.</span><span class="n">modifer</span>
+<span class="n">instance</span><span class="o">.</span><span class="n">modifer</span>
+<span class="n">instance</span><span class="o">.</span><span class="n">association</span><span class="o">.</span><span class="n">modifer</span></pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-29">&#182;</a>               </div>               <h4>Authorization:</h4>
+
+<p>Authorizes a request before making it.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="no">Contact</span><span class="o">.</span><span class="n">authorize</span><span class="p">({</span> <span class="n">access_token</span><span class="p">:</span> <span class="s1">&#39;abc123&#39;</span> <span class="p">})</span></pre></div>             </td>           </tr>                               <tr id="section-30">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-30">&#182;</a>               </div>               <h4>With Parameters:</h4>
+
+<p>Add parameters to the outgoing call.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="no">Contact</span><span class="o">.</span><span class="n">with_params</span><span class="p">({</span> <span class="n">sort_by</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span> <span class="p">})</span></pre></div>             </td>           </tr>                               <tr id="section-31">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-31">&#182;</a>               </div>               <h4>With Path</h4>
+
+<p>Changes the path.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="no">Contact</span><span class="o">.</span><span class="n">with_path</span><span class="p">(</span><span class="s2">&quot;v2/contacts&quot;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-32">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-32">&#182;</a>               </div>               <h5>Prepending the Path...</h5>             </td>             <td class="code">               <div class="highlight"><pre><span class="no">Contact</span><span class="o">.</span><span class="n">with_path</span><span class="p">(</span><span class="n">prepend</span><span class="p">:</span> <span class="s2">&quot;/my&quot;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-33">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-33">&#182;</a>               </div>               <h5>Appending the path...</h5>             </td>             <td class="code">               <div class="highlight"><pre><span class="no">Contact</span><span class="o">.</span><span class="n">with_path</span><span class="p">(</span><span class="n">append</span><span class="p">:</span> <span class="s2">&quot;/deleted&quot;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-34">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-34">&#182;</a>               </div>               <h5>Combine them all...</h5>             </td>             <td class="code">               <div class="highlight"><pre><span class="no">Contact</span><span class="o">.</span><span class="n">with_path</span><span class="p">(</span><span class="s2">&quot;v2/contacts&quot;</span><span class="p">,</span> <span class="n">prepend</span><span class="p">:</span> <span class="s2">&quot;/my&quot;</span><span class="p">,</span> <span class="n">append</span><span class="p">:</span> <span class="s2">&quot;/deleted&quot;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-35">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-35">&#182;</a>               </div>               <h2>More coming soon...</h2>
+
+<h4>TODO's:</h4>
+
+<ul>
+<li>Full Tested!</li>
+<li>Polymorphic Associations</li>
+<li>Many to Many Associations</li>
+<li>Additional Authorization Schemes (I.E. Basic Auth, API Token, etc.)</li>
+<li>And More...</li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
