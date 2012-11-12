@@ -23,8 +23,8 @@ module Restly
   autoload :ConcernedInheritance
 
   if defined?(Rails::Console)
-    def self.login(username, password)
-      Base.current_token = { access_token: Client.new.password.get_token(username, password).token }
+    def self.login(username, password, scope = "full")
+      Base.current_token = { access_token: Client.new.password.get_token(username, password, scope: scope).token }
     end
   end
 

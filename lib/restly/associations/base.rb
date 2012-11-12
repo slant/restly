@@ -25,7 +25,7 @@ class Restly::Associations::Base
   end
 
   def association_class
-    [@namespace, options(:class_name)].select(&:present?).join('::').constantize
+    [@namespace, options[:class_name]].select(&:present?).join('::').constantize
   end
 
   private

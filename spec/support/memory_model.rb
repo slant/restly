@@ -55,9 +55,87 @@ class MemoryModel < Hash
       }
     end
 
+    private
+
     def field(attr, options={})
       options.assert_valid_keys(:default)
       self.fields[attr] = options[:default]
+    end
+
+    def belongs_to(association, options={})
+      options.assert_valid_keys(:class_name)
+      foreign_key = options[:foreign_key] || "#{association}_id".to_sym
+      field foreign_key
+      klass = -> { (options[:class_name] || association).classify.constantize }
+      define_method association do
+
+        extender = Module.new do
+
+          def build
+            klass.new(foreign_key.to_sym => self[:id])
+          end
+
+          def =(obj)
+            raise "invalid" unless obj.is_a(klass)
+            obj.update(foreign_key.to_sym => self[:id])
+          end
+
+        end
+
+        instance = klass.call.find(self[foreign_key])
+        instance.extend extender
+
+      end
+    end
+
+    def has_one(association, options={})
+      options.assert_valid_keys(:class_name, :foreign_key)
+      foreign_key = options[:foreign_key] || "#{name}_id".to_sym
+      klass = -> { (options[:class_name] || association).classify.constantize }
+      define_method association do
+
+        extender = Module.new do
+
+          def build
+            klass.new(foreign_key.to_sym => self[:id])
+          end
+
+          def =(obj)
+            raise "invalid" unless obj.is_a(klass)
+            obj.update(foreign_key.to_sym => self[:id])
+          end
+
+        end
+
+        instance = klass.call.all.find {|i| i[foreign_key] == self[:id] }
+        instance.extend extender
+
+      end
+    end
+
+    def has_many(association, options={})
+      options.assert_valid_keys(:class_name, :foreign_key)
+      foreign_key = options[:foreign_key] || "#{name}_id".to_sym
+      klass = -> { (options[:class_name] || association).classify.constantize }
+      define_method association do
+
+        extender = Module.new do
+
+          def build
+            klass.new(foreign_key.to_sym => self[:id])
+          end
+
+          def <<(obj)
+            raise "invalid!" unless obj.is_a(klass)
+            obj.update(foreign_key.to_sym => self[:id])
+          end
+
+        end
+
+        collection = klass.call.all.select {|i| i[foreign_key] == self[:id] }
+        collection.extend extender
+
+      end
     end
 
   end
