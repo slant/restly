@@ -2,11 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ff89b21f-5fe4-4538-a459-9d18f6d5466e" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/restly.html" afterPath="$PROJECT_DIR$/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/restly.rb" afterPath="$PROJECT_DIR$/restly.rb" />
     </list>
     <ignored path="restly.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/restly.rb" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352754203495" ignored="false" />
+    <file path="/restly.rb" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352755265785" ignored="false" />
+    <file path="/generate" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352755137956" ignored="false" />
     <file path="/a.dummy" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352748640550" ignored="false" />
     <file path="/conditionals.rb" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352748579315" ignored="false" />
     <file path="/base.rb" changelist="ff89b21f-5fe4-4538-a459-9d18f6d5466e" time="1352748322428" ignored="false" />
@@ -129,19 +132,28 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="restly.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="restly.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/restly.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="17" selection-start="49" selection-end="49" vertical-scroll-proportion="0.0">
+            <state line="2" column="46" selection-start="91" selection-end="91" vertical-scroll-proportion="0.053872053">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="1" column="0" selection-start="1028" selection-end="1028" vertical-scroll-proportion="-0.64">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="generate" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/generate">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="5" column="24" selection-start="91" selection-end="91" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -160,7 +172,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/lib/restly/error.rb" />
         <option value="$PROJECT_DIR$/lib/restly/client.rb" />
         <option value="$PROJECT_DIR$/lib/restly/base/includes.rb" />
@@ -175,6 +186,7 @@
         <option value="$PROJECT_DIR$/lib/restly.rb" />
         <option value="$PROJECT_DIR$/lib/restly/associations/base.rb" />
         <option value="$PROJECT_DIR$/lib/restly/associations/base/conditionals.rb" />
+        <option value="$PROJECT_DIR$/generate" />
         <option value="$PROJECT_DIR$/restly.rb" />
       </list>
     </option>
@@ -401,14 +413,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1680" height="1024" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32901832" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32901832" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18053855" sideWeight="0.67098165" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18053855" sideWeight="0.67098165" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -477,16 +489,23 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/restly.rb">
+    <entry file="file://$PROJECT_DIR$/generate">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="17" selection-start="49" selection-end="49" vertical-scroll-proportion="0.0">
+        <state line="5" column="24" selection-start="91" selection-end="91" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="1" column="0" selection-start="1028" selection-end="1028" vertical-scroll-proportion="-0.64">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/restly.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="46" selection-start="91" selection-end="91" vertical-scroll-proportion="0.053872053">
           <folding />
         </state>
       </provider>

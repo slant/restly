@@ -1,3 +1,3 @@
-#### Wonderful Documentations!
+#### A Restful Object Document Mapper (ODM)
 
-Class.new(String)
+# Restly connects your REST API to Ruby Models
