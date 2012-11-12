@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require "fileutils"
+
+# Generate Documentation
+puts "Generating Docs..."
+`docco -o . restly.rb`
+
+# Move File
+puts "Moving Files in Place..."
+FileUtils.move('restly.html', 'index.html', force: true)
+
+# Say All Done
+puts "All Done!"
