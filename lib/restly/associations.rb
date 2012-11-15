@@ -63,7 +63,6 @@ module Restly::Associations
     association = self.class.reflect_on_resource_association(attr)
     association.valid?(val)
     association_attributes[attr] = val
-    puts association_attributes
   end
 
   def get_association(attr, options={})
