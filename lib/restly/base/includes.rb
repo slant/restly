@@ -17,7 +17,12 @@ module Restly::Base::Includes
 
     def has_specification
       self.fields = Restly::Base::Resource::Specification.new(self).fields
+
+      self._accessible_attributes = accessible_attributes_configs.dup
+
       (self._accessible_attributes ||= {})[:default] = Restly::Base::Resource::Specification.new(self).accessible_attributes
+
+      self._active_authorizer = self._accessible_attributes
     end
 
     def connection

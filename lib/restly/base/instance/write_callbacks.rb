@@ -34,10 +34,14 @@ module Restly::Base::Instance::WriteCallbacks
   end
 
   def writeable_attributes(attributes=self.attributes)
-    if (maa = mass_assignment_authorizer :default).is_a? ActiveModel::MassAssignmentSecurity::BlackList
+    maa = mass_assignment_authorizer(:default)
+
+    if maa.is_a? ActiveModel::MassAssignmentSecurity::BlackList
       attributes.reject{ |key, val| maa.map(&:to_sym).include?(key.to_sym) }
-    elsif mass_assignment_authorizer.is_a? ActiveModel::MassAssignmentSecurity::BlackList
+
+    elsif maa.is_a? ActiveModel::MassAssignmentSecurity::WhiteList
       attributes.select{ |key, val| maa.map(&:to_sym).include?(key.to_sym) }
+
     end
   end
 
