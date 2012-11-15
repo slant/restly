@@ -18,8 +18,12 @@ module Restly::Associations::Base::Stubs
   end
 
   def stub_instance(parent, attributes)
-    instance = association_class.new(attributes, loaded: embedded?)
-    Restly::Proxies::Associations::Instance.new(instance, parent)
+    if attributes.is_a?(association_class)
+     attributes
+    else
+     new_instance = association_class.new(attributes, loaded: embedded?)
+     Restly::Proxies::Associations::Instance.new(new_instance, parent)
+    end
   end
 
 end
