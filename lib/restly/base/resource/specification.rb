@@ -1,103 +1,60 @@
-class Restly::Base::Resource::Specification < HashWithIndifferentAccess
+class Restly::Base::Resource::Specification
+  extend ActiveSupport::Autoload
 
-  attr_reader :model, :fields, :accessible_attributes
+  autoload :Fields
+  autoload :MassAssignmentSecurity
+
+  attr_reader :model
+
+  delegate :authorize, :client_token, :path, to: :model
 
   def initialize(model)
     @model = model
-    @fields = Fields.new(self)
-    @accessible_attributes = AccessibleAttributes.new(self)
+    @specification = HashWithIndifferentAccess.new
+    @retry_count = 0
+  end
+
+  def accessible_attributes
+    @accessible_attributes ||= MassAssignmentSecurity::AccessibleAttributes.new(self)
+  end
+
+  def protected_attributes
+    @protected_attributes ||= MassAssignmentSecurity::ProtectedAttributes.new(self)
+  end
+
+  def active_authorizer
+    @active_authorizer ||= MassAssignmentSecurity::DynamicAuthorizer.new(self)
+  end
+
+  def fields
+    @fields ||= Fields.new(self)
   end
 
   def [](key)
-    reload! if super.nil?
-    super
+    reload_specification! unless @specification[key].present?
+    @specification[key]
   end
 
-  def reload!
+  private
+
+  def reload_specification!
     parsed_response = authorize(client_token).connection.request(:options, path).parsed
-    self.replace parsed_response if parsed_response.present?
+    @specification = parsed_response.with_indifferent_access if parsed_response.present?
   rescue OAuth2::Error
     false
   end
 
   def method_missing(method, *args, &block)
-    return model.send(method, *args, &block) if model.respond_to?(method)
-    super
+    if self[method]
+      self[method]
+    else
+      @retry_count = 0
+      super(method, *args, &block)
+    end
   end
 
   def respond_to_missing?(method, include_private=false)
     model.respond_to?(method)
-  end
-
-  module ReloadableSet
-
-    def include?(field)
-      reload! unless super
-      super
-    end
-
-    def inspect
-      reload! if empty?
-      super
-    end
-
-    def each(*args, &block)
-      reload! if empty?
-      super
-    end
-
-    def map(*args, &block)
-      reload! if empty?
-      super
-    end
-
-    def map!(*args, &block)
-      reload! if empty?
-      super
-    end
-
-    def reduce(*args, &block)
-      reload! if empty?
-      super
-    end
-
-    def reload!
-      replace []
-      self
-    end
-
-  end
-
-  class Fields < Restly::Base::Fields::FieldSet
-    include ReloadableSet
-
-    attr_reader :spec
-
-    def initialize(spec)
-      @spec = spec
-      super([])
-    end
-
-    def reload!
-      replace spec[:attributes]
-    end
-
-  end
-
-  class AccessibleAttributes < ActiveModel::MassAssignmentSecurity::WhiteList
-    include ReloadableSet
-
-    attr_reader :spec
-
-    def initialize(spec)
-      @spec = spec
-      super([])
-    end
-
-    def reload!
-      replace spec[:actions].map { |action| action['parameters'] }.flatten if spec[:actions].present?
-    end
-
   end
 
 end

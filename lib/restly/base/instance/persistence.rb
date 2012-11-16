@@ -26,7 +26,7 @@ module Restly::Base::Instance::Persistence
 
   def reload!
     raise Restly::Error::MissingId, "Cannot reload #{resource_name}, either it hasn't been created or it is missing an ID." unless id
-    set_attributes_from_response connection.get(path, force: true)
+    set_attributes_from_response connection.get(path_with_format, force: true)
     @loaded = true
     self
   end

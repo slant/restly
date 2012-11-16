@@ -1,6 +1,10 @@
 module Restly::Base::Includes
   extend ActiveSupport::Concern
 
+  included do
+    class_attribute :current_specification, instance_writer: false
+  end
+
   module ClassMethods
 
     # Delegate stuff to client
@@ -16,13 +20,17 @@ module Restly::Base::Includes
     end
 
     def has_specification
-      self.fields = Restly::Base::Resource::Specification.new(self).fields
+      self.current_specification = Restly::Base::Resource::Specification.new(self)
+
+      self.fields = current_specification.fields
 
       self._accessible_attributes = accessible_attributes_configs.dup
+      self._protected_attributes =  protected_attributes_configs.dup
 
-      (self._accessible_attributes ||= {})[:default] = Restly::Base::Resource::Specification.new(self).accessible_attributes
+      (self._accessible_attributes ||= {})[:default] = current_specification.accessible_attributes
+      (self._protected_attributes ||= {})[:default] = current_specification.protected_attributes
 
-      self._active_authorizer = self._accessible_attributes
+      self._active_authorizer = current_specification.active_authorizer
     end
 
     def connection
