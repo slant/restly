@@ -32,7 +32,8 @@ class Restly::Base::Resource::Specification::Fields < Restly::Proxies::Base
   end
 
   def reload_specification!
-    fields = (spec[:attributes] - @removed.to_a) + @added.to_a
+    from_spec = spec[:attributes] || []
+    fields = (from_spec - @removed.to_a) + @added.to_a
     __setobj__ Restly::Base::Fields::FieldSet.new(fields)
   end
 
