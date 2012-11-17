@@ -68,6 +68,10 @@ module Restly::Base::Instance
     end
   end
 
+  def to_param
+    id.to_s
+  end
+
   private
 
   def set_response(response)
