@@ -1,4 +1,4 @@
-module Restly::Base::Instance::Conditions
+module Restly::Base::Instance::Comparable
 
   def ==(object)
     reload!
