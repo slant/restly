@@ -45,7 +45,7 @@ module Restly::Base::Resource::Specification::MassAssignmentSecurity
 
     def reload_specification!
       accepts = spec.actions.map { |action| action['accepts_parameters'] }.flatten if spec.actions.present?
-      __setobj__ ActiveModel::MassAssignmentSecurity::BlackList.new accepts
+      __setobj__ ActiveModel::MassAssignmentSecurity::WhiteList.new accepts
     end
 
   end
