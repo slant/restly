@@ -72,8 +72,6 @@ class Restly::Connection < OAuth2::AccessToken
   private
 
   def cached_request(verb, path, opts={}, &block)
-    cache_options = self.cache_options.dup
-
     options_hash = { verb: verb, token: token, opts: opts, cache_opts: cache_options, block: block }
     options_packed = [Marshal.dump(options_hash)].pack('m')
     options_hex = Digest::MD5.hexdigest(options_packed)
