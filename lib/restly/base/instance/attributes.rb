@@ -33,6 +33,7 @@ module Restly::Base::Instance::Attributes
                "To fix this add the following the the model. -- field :#{attr}"
     end
   end
+  alias :[]= :write_attribute
 
   def read_attribute(attr, options={})
     options.reverse_merge!({autoload: true})
@@ -45,6 +46,7 @@ module Restly::Base::Instance::Attributes
   end
 
   alias :attribute :read_attribute
+  alias :[] :read_attribute
 
   def has_attribute?(attr)
     attribute(attr)
