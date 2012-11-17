@@ -5,7 +5,7 @@ module Restly::Base::Instance
   autoload :Attributes
   autoload :Persistence
   autoload :WriteCallbacks
-  autoload :Conditions
+  autoload :Comparable
 
   include Restly::Base::GenericMethods
   include Actions
