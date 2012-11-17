@@ -5,12 +5,14 @@ module Restly::Base::Instance
   autoload :Attributes
   autoload :Persistence
   autoload :WriteCallbacks
+  autoload :Conditions
 
   include Restly::Base::GenericMethods
   include Actions
   include Attributes
   include Persistence
   include WriteCallbacks
+  include Conditions
 
   included do
     attr_reader :init_options, :response
