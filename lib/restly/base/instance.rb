@@ -6,6 +6,7 @@ module Restly::Base::Instance
   autoload :Persistence
   autoload :WriteCallbacks
   autoload :Comparable
+  autoload :ErrorHandling
 
   include Restly::Base::GenericMethods
   include Actions
@@ -13,9 +14,10 @@ module Restly::Base::Instance
   include Persistence
   include WriteCallbacks
   include Comparable
+  include ErrorHandling
 
   included do
-    attr_reader :init_options, :response
+    attr_reader :init_options, :response, :errors
     delegate :spec, to: :resource
   end
 
@@ -29,6 +31,7 @@ module Restly::Base::Instance
     @attributes_cache = {}
     @previously_changed = {}
     @changed_attributes = {}
+    @errors = ActiveModel::Errors.new(self)
 
     run_callbacks :initialize do
       @readonly = options[:readonly] || false
@@ -42,7 +45,7 @@ module Restly::Base::Instance
   end
 
   def loaded?
-    @loaded
+    !!@loaded
   end
 
   def connection
@@ -78,7 +81,11 @@ module Restly::Base::Instance
     raise Restly::Error::InvalidResponse unless response.is_a? OAuth2::Response
     @response = response
     if response.try(:body)
-      set_attributes_from_response
+      if parsed_response(response)[:errors] || parsed_response(response)[:error]
+        set_errors_from_response
+      else
+        set_attributes_from_response
+      end
     end
   end
 
@@ -86,7 +93,9 @@ module Restly::Base::Instance
     return {} unless response
     parsed = response.parsed || {}
     if parsed.is_a?(Hash) && parsed[resource_name]
-      parsed[resource_name]
+      parsed[resource_name].with_indifferent_access
+    elsif parsed.is_a?(Hash)
+      parsed.with_indifferent_access
     else
       parsed
     end

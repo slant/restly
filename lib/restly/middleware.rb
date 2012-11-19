@@ -9,6 +9,7 @@ class Restly::Middleware
   def call(env)
     @env = env
     token = Restly::Connection.tokenize(Restly::Base.client, self).to_hash
+
     if token[:access_token].present? && !@env['PATH_INFO'].match(/^\/assets\//)
       thread = Thread.new do
         Restly::Base.current_token = token
@@ -18,6 +19,7 @@ class Restly::Middleware
     else
       self.app.call(env)
     end
+
   end
 
 end
