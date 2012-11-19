@@ -12,7 +12,7 @@ module Restly::Base::Instance
   include Attributes
   include Persistence
   include WriteCallbacks
-  include Conditions
+  include Comparable
 
   included do
     attr_reader :init_options, :response
