@@ -69,7 +69,7 @@ class Restly::Collection < Array
     parsed = parsed[resource_name.pluralize] if parsed.is_a?(Hash) && parsed[resource_name.pluralize]
     parsed.collect do |instance|
       instance = instance[resource_name] if instance[resource_name]
-      resource.new(instance, connection: connection)
+      resource.new(instance, connection: connection, loaded: false)
     end
   end
 
