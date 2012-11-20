@@ -30,4 +30,29 @@ module Restly
 
 end
 
-require 'restly/railtie' if Object.const_defined?('Rails')
+require 'restly/railtie' if Object.const_defined?('Rails')require 'restly/railtie' if Object.const_defined?('Rails')
+require 'restly/notifications'
+
+class Object
+
+  @@__method_calls ||= {}
+
+  def current_method(index=0)
+    /`(?<curr_method>.*?)'/ =~ caller[index]
+    curr_method
+  end
+
+  def method_called(enum, *args)
+    count = enum.count
+    method = Digest::MD5.hexdigest( current_method(1) + args.to_sentence )
+
+    @@__method_calls.delete_if { |k, v| v[:timestamp] < Time.now - 10 }
+    @@__method_calls[method.to_sym] ||= {}
+    @@__method_calls[method.to_sym][:count] ||= 0
+    @@__method_calls[method.to_sym][:count] += 1
+    @@__method_calls[method.to_sym][:timestamp] = Time.now
+
+    @@__method_calls[method.to_sym][:count] >= count
+  end
+
+end
