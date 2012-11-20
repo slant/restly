@@ -30,7 +30,7 @@ module Restly
 
 end
 
-require 'restly/railtie' if Object.const_defined?('Rails')require 'restly/railtie' if Object.const_defined?('Rails')
+require 'restly/railtie' if Object.const_defined?('Rails')
 require 'restly/notifications'
 
 class Object

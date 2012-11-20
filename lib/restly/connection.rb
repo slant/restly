@@ -63,9 +63,13 @@ class Restly::Connection < OAuth2::AccessToken
 
   def request(verb, path, opts={}, &block)
     if cache && !opts[:force]
-      cached_request(verb, path, opts, &block)
+      ActiveSupport::Notifications.instrument("fetch.restly", url: path, method: verb, name: "Restly::CacheRequest") do
+        cached_request(verb, path, opts, &block)
+      end
     else
-      forced_request(verb, path, opts, &block)
+      ActiveSupport::Notifications.instrument("fetch.restly", url: path, method: verb, name: "Restly::Request") do
+        forced_request(verb, path, opts, &block)
+      end
     end
   end
 
@@ -84,15 +88,17 @@ class Restly::Connection < OAuth2::AccessToken
 
     # Set the response
     response = Rails.cache.fetch cache_key, cache_options.symbolize_keys do
+      ActiveSupport::Notifications.instrument("cache_miss.restly", url: path, method: verb, name: "Restly::CacheMiss") do
 
-      Rails.cache.delete_matched("#{path.parameterize}*") if ![:get, :options].include?(verb)
-      opts.merge!({force: true})
-      request(verb, path, opts, &block)
+        Rails.cache.delete_matched("#{path.parameterize}*") if ![:get, :options].include?(verb)
+        opts.merge!({force: true})
+        request(verb, path, opts, &block)
 
+      end
     end
 
     # Clear the cache if there is an error
-    Rails.cache.delete(cache_key) and puts "deleted cache for: #{verb} #{path}" if response.error
+    Rails.cache.delete(cache_key) if response.error
 
     # Return the response
     response
