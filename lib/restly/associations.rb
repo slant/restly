@@ -56,7 +56,11 @@ module Restly::Associations
   private
 
   def association_attributes
-    @association_attributes ||= {}.with_indifferent_access
+    @association_attributes ||= HashWithIndifferentAccess.new
+  end
+
+  def loaded_associations
+    @loaded_associations ||= HashWithIndifferentAccess.new
   end
 
   def set_association(attr, val)
@@ -66,15 +70,18 @@ module Restly::Associations
   end
 
   def get_association(attr, options={})
-    association = self.class.reflect_on_resource_association(attr)
-    if (stubbed = association.stub self, association_attributes[attr]).present?
-      stubbed
-    elsif (loaded = association.load self, options).present?
-      loaded
-    else
-      association.build(self)
-    end
+    return loaded_associations[attr] if loaded_associations[attr].present?
+    ActiveSupport::Notifications.instrument("load_association.restly", model: self.class.name, association: attr) do
+      association = self.class.reflect_on_resource_association(attr)
 
+      loaded_associations[attr] = if (stubbed = association.stub self, association_attributes[attr]).present?
+                                    stubbed
+                                  elsif (loaded = association.load self, options).present?
+                                    loaded
+                                  else
+                                    association.build(self)
+                                  end
+    end
   end
 
   def association_missing(m, *args)
