@@ -2,7 +2,7 @@ class Restly::Connection < OAuth2::AccessToken
 
   attr_accessor :cache, :cache_options
 
-  delegate :resource, :resource_name, to: :client
+  delegate :resource, :resource_name, :base_path, to: :client
 
   # TODO: Refactor with subclasses that have their own tokenize methods.
   def self.tokenize(client, object)
@@ -64,6 +64,8 @@ class Restly::Connection < OAuth2::AccessToken
   alias_method :forced_request, :request
 
   def request(verb, path, opts={}, &block)
+    path = [base_path, path.gsub(/^\/?/, '')].join('/')
+
     if cache && !opts[:force]
       request_log("Restly::CacheRequest", path, verb) do
         cached_request(verb, path, opts, &block)
