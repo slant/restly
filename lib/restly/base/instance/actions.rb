@@ -25,13 +25,13 @@ module Restly::Base::Instance::Actions
 
   def update
     run_callbacks :update do
-      set_attributes_from_response(connection.put path_with_format, body: @request_body, params: params)
+      set_response(connection.put path_with_format, body: @request_body, params: params)
     end
   end
 
   def create
     run_callbacks :create do
-      set_attributes_from_response(connection.post path_with_format, body: @request_body, params: params)
+      set_response(connection.post path_with_format, body: @request_body, params: params)
     end
   end
 
