@@ -16,7 +16,7 @@ Gem::Specification.new do |gem|
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
-  gem.add_dependency "oauth2", "~> 0.8.0"
+  gem.add_dependency "oauth2", "> 0.6"
   gem.add_dependency "activesupport", "~> 3.2"
   gem.add_dependency "activemodel", "~> 3.2"
   gem.add_dependency "colorize", "~> 0.5.8"
