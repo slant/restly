@@ -1,18 +1,30 @@
 class Restly::Client < OAuth2::Client
 
   attr_accessor :id, :secret, :site
-  attr_reader :format
+  attr_reader :format, :resource
 
   def initialize(*args, &block)
     opts = args.extract_options!
     opts.merge!(raise_errors: false)
-    self.id =     args[0] || Restly::Configuration.oauth_options[:client_id]
-    self.secret = args[1] || Restly::Configuration.oauth_options[:client_secret]
-    self.site = opts.delete(:site) || Restly::Configuration.site
-    self.options = Restly::Configuration.client_options.merge(opts)
-    self.ssl = opts.delete(:ssl) || Restly::Configuration.ssl
-    self.format = @format = opts.delete(:format) || Restly::Configuration.default_format
+
+    self.resource  = opts.delete(:resource) if opts[:resource]
+    self.id        = args[0] || Restly::Configuration.oauth_options[:client_id]
+    self.secret    = args[1] || Restly::Configuration.oauth_options[:client_secret]
+    self.site      = opts.delete(:site) || Restly::Configuration.site
+    self.options   = Restly::Configuration.client_options.merge(opts)
+    self.ssl       = opts.delete(:ssl) || Restly::Configuration.ssl
+    self.format    = @format = opts.delete(:format) || Restly::Configuration.default_format
     self.options[:connection_build] ||= block
+
+  end
+
+  def resource=(resource)
+    raise InvalidObject, "Resource must be a descendant of Restly::Base" unless resource.ancestors.include?(Restly::Base)
+    @resource = resource
+  end
+
+  def resource_name
+    resource.name.parameterize
   end
 
   def ssl=(val)

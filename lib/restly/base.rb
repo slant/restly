@@ -65,6 +65,7 @@ module Restly
       self.resource_name      = name.gsub(/.*::/,'').underscore if name.present?
       self.path               = resource_name.pluralize
       self.params             = params.dup
+      self.client             = client.dup
     end
 
     # Run Active Support Load Hooks
