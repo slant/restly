@@ -9,14 +9,14 @@ class Restly::Base::Resource::Specification::Fields < Restly::Proxies::Base
     super Restly::Base::Fields::FieldSet.new(spec.model)
   end
 
-  def -(field)
+  def - field
     @removed << field
-    super
+    __getobj__ - field
   end
 
-  def +(field)
+  def + field
     @added << field
-    super
+    __getobj__ + field
   end
 
   private
