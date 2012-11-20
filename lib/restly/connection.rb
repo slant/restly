@@ -65,6 +65,7 @@ class Restly::Connection < OAuth2::AccessToken
 
   def request(verb, path, opts={}, &block)
     path = [base_path, path.gsub(/^\/?/, '')].join('/')
+    puts path.blue
 
     if cache && !opts[:force]
       request_log("Restly::CacheRequest", path, verb) do
