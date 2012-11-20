@@ -11,12 +11,17 @@ module Restly::Base::Includes
     delegate :site, :site=, :format, :format=, to: :client
 
     def client
-      @client ||= Restly::Client.new
+      return @client if @client
+      @client = Restly::Client.new(nil, nil)
+      @client.resource = self
+      @client
     end
 
     def client=(client)
-      raise Restly::Error::InvalidClient, "Client is invalid!"
+      raise Restly::Error::InvalidClient, "Client is invalid!" unless client.is_a?(Restly::Client)
       @client = client
+      @client.resource = self
+      @client
     end
 
     def has_specification
