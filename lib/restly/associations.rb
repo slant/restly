@@ -77,8 +77,8 @@ module Restly::Associations
 
   end
 
-  def method_missing(m, *args, &block)
-    if !!(/(?<attr>\w+)(?<setter>=)?$/ =~ m.to_s) && associations.include?(m)
+  def association_missing(m, *args)
+    if !!(/(?<attr>\w+)(?<setter>=)?$/ =~ m.to_s) && respond_to_association?(m)
       attr = attr.to_sym
       case !!setter
         when true
@@ -87,8 +87,14 @@ module Restly::Associations
           get_association(attr)
       end
     else
-      super(m, *args, &block)
+      raise Restly::Error::InvalidAssociation, "Association is invalid"
     end
+  end
+
+  def method_missing(m, *args, &block)
+    association_missing(m, *args)
+  rescue Restly::Error::InvalidAssociation
+    super
   end
 
 end
