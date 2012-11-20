@@ -6,7 +6,7 @@ class Restly::Base::Resource::Specification::Fields < Restly::Proxies::Base
     @spec = spec
     @removed = Set.new
     @added = Set.new
-    super Restly::Base::Fields::FieldSet.new
+    super Restly::Base::Fields::FieldSet.new(spec.model)
   end
 
   def -(field)
@@ -34,7 +34,7 @@ class Restly::Base::Resource::Specification::Fields < Restly::Proxies::Base
   def reload_specification!
     from_spec = spec[:attributes] || []
     fields = (from_spec - @removed.to_a) + @added.to_a
-    __setobj__ Restly::Base::Fields::FieldSet.new(fields)
+    __setobj__ Restly::Base::Fields::FieldSet.new(spec.model, fields)
   end
 
 end
