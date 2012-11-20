@@ -1,21 +1,28 @@
 class Restly::Collection < Array
   extend ActiveSupport::Autoload
   autoload :Pagination
+  autoload :ErrorHandling
 
   include Restly::Base::Resource::Finders
   include Restly::Base::Resource::BatchActions
   include Restly::Base::GenericMethods
+  include ErrorHandling
 
   delegate :resource_name, :new, :client, to: :resource
 
-  attr_reader :resource
+  attr_reader :resource, :response
 
   def initialize(resource, array=[], opts={})
-    @resource = resource
-    @response = opts[:response]
-    @connection
-    array = items_from_response if @response.is_a?(OAuth2::Response)
-    super(array)
+    ActiveSupport::Notifications.instrument("load_collection.restly", model: resource.name) do
+      @errors = []
+      @resource = resource
+      @connection
+      if opts[:response]
+        set_response(opts[:response])
+      else
+        replace array
+      end
+    end
   end
 
   [:path, :connection, :params].each do |attr|
@@ -52,29 +59,58 @@ class Restly::Collection < Array
     super(instance)
   end
 
+  def replace(array)
+    array.each do |instance|
+      raise Restly::Error::InvalidObject, "Object is not an instance of #{resource}" unless accepts?(instance)
+    end
+    super
+  end
+
   def reload!
     replace collection_from_response(connection.get path)
   end
 
   private
 
+  def set_response(response)
+    raise Restly::Error::InvalidResponse unless response.is_a? OAuth2::Response
+    @response = response
+    if response.try(:body)
+      if response_has_errors?(response)
+        set_errors_from_response
+      else
+        set_items_from_response
+      end
+    end
+  end
+
   def serializable_hash(options = nil)
-    self.collect do |i|
+    self.map do |i|
       i.serializable_hash(options)
     end
   end
 
-  def items_from_response
-    parsed = @response.parsed || {}
-    parsed = parsed[resource_name.pluralize] if parsed.is_a?(Hash) && parsed[resource_name.pluralize]
-    parsed.collect do |instance|
+  def set_items_from_response(response=self.response)
+    parsed_response(response).reduce(self) do |collection, instance|
       instance = instance[resource_name] if instance[resource_name]
-      resource.new(instance, connection: connection, loaded: false)
+      collection << resource.new(instance, connection: connection, loaded: false)
     end
   end
 
   def accepts?(instance)
     instance.class.name == resource.name
+  end
+
+  def parsed_response(response=self.response)
+    return {} unless response
+    parsed = response.parsed || {}
+    if parsed.is_a?(Hash) && parsed[resource_name.pluralize]
+      parsed[resource_name.pluralize]
+    elsif parsed.is_a?(Hash)
+      parsed.with_indifferent_access
+    else
+      parsed
+    end
   end
 
 end

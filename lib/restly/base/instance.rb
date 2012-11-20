@@ -26,22 +26,26 @@ module Restly::Base::Instance
     @init_options = options
     @attributes = HashWithIndifferentAccess.new
     @association_cache = {}
-    @association_attributes = {}.with_indifferent_access
+    @association_attributes = HashWithIndifferentAccess.new
     @aggregation_cache = {}
     @attributes_cache = {}
     @previously_changed = {}
     @changed_attributes = {}
     @errors = ActiveModel::Errors.new(self)
 
-    run_callbacks :initialize do
-      @readonly = options[:readonly] || false
-      set_response options[:response] if options[:response]
-      @loaded = options.has_key?(:loaded) ? options[:loaded] : true
-      self.attributes = attributes if attributes
-      self.connection = options[:connection] if options[:connection].is_a?(OAuth2::AccessToken)
+    ActiveSupport::Notifications.instrument("load_instance.restly", instance: self) do
+
+      run_callbacks :initialize do
+
+        @readonly = options[:readonly] || false
+        set_response options[:response] if options[:response]
+        @loaded = options.has_key?(:loaded) ? options[:loaded] : true
+        self.attributes = attributes if attributes
+        self.connection = options[:connection] if options[:connection].is_a?(OAuth2::AccessToken)
+
+      end
 
     end
-
   end
 
   def loaded?
@@ -81,7 +85,7 @@ module Restly::Base::Instance
     raise Restly::Error::InvalidResponse unless response.is_a? OAuth2::Response
     @response = response
     if response.try(:body)
-      if parsed_response(response)[:errors] || parsed_response(response)[:error]
+      if response_has_errors?(response)
         set_errors_from_response
       else
         set_attributes_from_response

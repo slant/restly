@@ -1,7 +1,16 @@
 module Restly::Base::Instance::ErrorHandling
   extend ActiveSupport::Concern
 
+  private
+
+  def response_has_errors?(response=self.response)
+    @response.status >= 400 ||
+      (parsed_response(response).is_a?(Hash) &&
+        (parsed_response(response)[:errors] || parsed_response(response)[:error]))
+  end
+
   def set_errors_from_response(response = self.response)
+
     response_errors = parsed_response(response)[:errors] || parsed_response(response)[:error]
 
     case response_errors

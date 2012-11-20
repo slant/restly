@@ -1,18 +1,11 @@
 module Restly::Error
 
-  class StandardError < ::StandardError
-
-    def message
-      defined?(IRB) ? super.red : super
-    end
-
-  end
-
   errors = %w{
     RecordNotFound
     InvalidClient
     InvalidObject
     InvalidConnection
+    ConnectionError
     MissingId
     InvalidSpec
     InvalidField
@@ -23,7 +16,7 @@ module Restly::Error
   }
 
   errors.each do |error|
-    const_set(error.to_sym, Class.new(StandardError))
+    const_set error.to_sym, Class.new(StandardError)
   end
 
 end

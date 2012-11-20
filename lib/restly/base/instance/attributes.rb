@@ -1,5 +1,3 @@
-require "colorize"
-
 module Restly::Base::Instance::Attributes
 
   def update_attributes(attributes)
@@ -9,7 +7,7 @@ module Restly::Base::Instance::Attributes
 
   def attributes=(attributes)
     attributes.each do |k, v|
-      send "#{k}=", v
+      self[k] = v
     end
   end
 
@@ -82,11 +80,8 @@ module Restly::Base::Instance::Attributes
       @attributes[attr.to_sym] = Attribute.new(val)
 
     else
-      puts "WARNING: Attribute `#{attr}` not written. ".colorize(:yellow) +
-             "To fix this add the following the the model. -- field :#{attr}"
+      ActiveSupport::Notifications.instrument("missing_attribute.restly", attr: attr)
     end
-  rescue
-    binding.pry
   end
 
   def read_attribute(attr, options={})

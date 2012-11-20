@@ -2,6 +2,8 @@ class Restly::Connection < OAuth2::AccessToken
 
   attr_accessor :cache, :cache_options
 
+  delegate :resource, :resource_name, to: :client
+
   # TODO: Refactor with subclasses that have their own tokenize methods.
   def self.tokenize(client, object)
 
@@ -63,45 +65,79 @@ class Restly::Connection < OAuth2::AccessToken
 
   def request(verb, path, opts={}, &block)
     if cache && !opts[:force]
-      ActiveSupport::Notifications.instrument("fetch.restly", url: path, method: verb, name: "Restly::CacheRequest") do
+      request_log("Restly::CacheRequest", path, verb) do
         cached_request(verb, path, opts, &block)
       end
     else
-      ActiveSupport::Notifications.instrument("fetch.restly", url: path, method: verb, name: "Restly::Request") do
+      request_log("Restly::Request", path, verb) do
         forced_request(verb, path, opts, &block)
       end
     end
   end
 
-  private
+  def id_from_path(path)
+    capture = path.match /(?<id>[0-9])\.\w*$/
+    capture[:id] if capture
+  end
 
   def cached_request(verb, path, opts={}, &block)
-    cache_options = self.cache_options.dup
+    id = id_from_path(path)
 
-    options_hash = { verb: verb, token: token, opts: opts, cache_opts: cache_options, block: block }
+    cache_options = self.cache_options.dup
+    options_hash = { path: path, verb: verb, token: token, opts: opts, cache_opts: cache_options, block: block }
     options_packed = [Marshal.dump(options_hash)].pack('m')
     options_hex = Digest::MD5.hexdigest(options_packed)
-    cache_key = [path.parameterize, options_hex].join('_')
+
+    # Keys
+    collection_expire_key = [resource_name, "*"].compact.join('_')
+    instance_expire_key = [id, resource_name, "*"].compact.join('_')
+    cache_key = [id, resource_name, options_hex].compact.join('_')
+
 
     # Force a cache miss for all methods except get
     cache_options[:force] = true unless [:get, :options].include?(verb)
 
     # Set the response
-    response = Rails.cache.fetch cache_key, cache_options.symbolize_keys do
-      ActiveSupport::Notifications.instrument("cache_miss.restly", url: path, method: verb, name: "Restly::CacheMiss") do
+    unless verb.to_s.upcase =~ /GET|OPTIONS/
 
-        Rails.cache.delete_matched("#{path.parameterize}*") if ![:get, :options].include?(verb)
-        opts.merge!({force: true})
-        request(verb, path, opts, &block)
+      # Expire Collections
+      cache_log("Restly::CacheExpire", instance_expire_key, :yellow) do
+        Rails.cache.delete_matched(collection_expire_key)
+      end
 
+      # Expire Instances
+      cache_log("Restly::CacheExpire", instance_expire_key, :yellow) do
+        Rails.cache.delete_matched(instance_expire_key)
       end
     end
 
-    # Clear the cache if there is an error
-    Rails.cache.delete(cache_key) if response.error
+    response =  Rails.cache.fetch cache_key, cache_options.symbolize_keys do
+      cache_log("Restly::CacheMiss", cache_key, :red) do
+                    forced_request(verb, path, opts, &block)
+                  end
+                end
+
+    cache_log("Restly::CacheExpire", cache_key, :yellow) { Rails.cache.delete(cache_key) } if response.error
+
+    raise Restly::Error::ConnectionError, "#{response.status}: #{status_string(response.status)}" if response.status >= 500
 
     # Return the response
     response
 
   end
+
+  def request_log(name, path, verb, color=:light_green, &block)
+    site = URI.parse(client.site)
+    formatted_path = ["#{site.scheme}://#{site.host}", path].join("/")
+    ActiveSupport::Notifications.instrument("request.restly", url: formatted_path, method: verb, name: name, color: color, &block)
+  end
+
+  def cache_log(name, key, color=:light_green, &block)
+    ActiveSupport::Notifications.instrument("cache.restly", key: key, name: name, color: color, &block)
+  end
+
+  def status_string(int)
+    Rack::Utils::HTTP_STATUS_CODES[int.to_i]
+  end
+
 end

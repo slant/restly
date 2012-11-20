@@ -17,16 +17,12 @@ module Restly::Base::Resource::Finders
   end
 
   def collection_from_response(response)
-    ActiveSupport::Notifications.instrument("load_collection.restly", model: name) do
-      raise Restly::Error::InvalidResponse unless response.is_a? OAuth2::Response
-      Restly::Collection.new resource, nil, response: response
-    end
+    raise Restly::Error::InvalidResponse unless response.is_a? OAuth2::Response
+    Restly::Collection.new resource, nil, response: response
   end
 
   def instance_from_response(response)
-    ActiveSupport::Notifications.instrument("load_instance.restly", model: name) do
-      new(nil, response: response, connection: connection)
-    end
+    new(nil, response: response, connection: connection)
   end
 
   alias_method :from_response, :instance_from_response

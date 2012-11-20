@@ -1,52 +1,17 @@
-module Restly::Base::Instance::ErrorHandling
+module Restly::Collection::ErrorHandling
   extend ActiveSupport::Concern
 
+  def response_has_errors?(response=self.response)
+    @response.status >= 400 ||
+      (parsed_response(response).is_a?(Hash) &&
+        (parsed_response(response)[:errors] || parsed_response(response)[:error]))
+  end
+
   def set_errors_from_response(response = self.response)
-
-    response_errors = parsed_response(response)[:errors] || parsed_response(response)[:error]
-
-    case response_errors
-
-      when Hash
-        response_errors.each do |name, error|
-          case error
-
-            when Array
-              error.each { |e| self.errors.add(name.to_sym, e) }
-
-            when String
-              self.errors.add(name.to_sym, error)
-
-          end
-        end
-
-      when Array
-        response_errors.each do |error|
-          self.errors.add(:base, error)
-        end
-
-      when String
-        self.errors.add(:base, response_errors)
-
+    if (error = parsed_response(response)[:errors] || parsed_response(response)[:error])
+      @errors << error
     end
-
-    self.errors
-  end
-
-  def read_attribute_for_validation(attr)
-    send attr
-  end
-
-  module ClassMethods
-
-    def human_attribute_name(attr, options = {})
-      attr.to_s.humanize
-    end
-
-    def lookup_ancestors
-      [self]
-    end
-
+    replace []
   end
 
 end
