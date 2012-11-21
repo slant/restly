@@ -11,12 +11,12 @@ class Restly::Base::Resource::Specification::Fields < Restly::Proxies::Base
 
   def - field
     @removed << field
-    method_missing __method__, field
+    replace(__getobj__.send __method__, field)
   end
 
   def + field
     @added << field
-    method_missing __method__, field
+    replace(__getobj__.send __method__, field)
   end
 
   private
@@ -24,12 +24,16 @@ class Restly::Base::Resource::Specification::Fields < Restly::Proxies::Base
   def method_missing(m, *args, &block)
     reload_specification! if !super.present? || m == :inspect
     if (value = super).is_a? self.class
-      duplicate = self.dup
-      duplicate.__setobj__ super
-      duplicate
+      replace(super)
     else
       value
     end
+  end
+
+  def replace(object)
+    duplicate = self.dup
+    duplicate.__setobj__ object
+    duplicate
   end
 
   def reload_specification!
