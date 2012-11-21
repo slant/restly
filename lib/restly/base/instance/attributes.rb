@@ -21,7 +21,7 @@ module Restly::Base::Instance::Attributes
   end
 
   def attribute(key, options={})
-    read_attribute(key)
+    read_attribute(key, options)
   end
 
   def []=(key, value)
@@ -78,7 +78,7 @@ module Restly::Base::Instance::Attributes
 
   def write_attribute(attr, val)
     if fields.include?(attr)
-      p ":#{attr} is changing!" and send("#{attr}_will_change!") if val != read_attribute(attr) && loaded?
+      send("#{attr}_will_change!") if val != read_attribute(attr) && loaded?
       @attributes[attr.to_sym] = val
 
     else
