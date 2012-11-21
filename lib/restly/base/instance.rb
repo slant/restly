@@ -45,11 +45,17 @@ module Restly::Base::Instance
 
       end
 
+      @initialized = true
+
     end
   end
 
   def loaded?
     !!@loaded
+  end
+
+  def initialized?
+    !!@initialized
   end
 
   def connection
