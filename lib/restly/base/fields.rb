@@ -2,6 +2,7 @@ module Restly::Base::Fields
   extend ActiveSupport::Concern
 
   included do
+
     extend  ClassMethods
 
     class_attribute :fields
