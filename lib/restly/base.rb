@@ -32,15 +32,15 @@ module Restly
     # Concerned Inheritance
     include Restly::ConcernedInheritance
 
+    # Relationships
+    include Restly::Associations
+    include Restly::EmbeddedAssociations
+
     # Actions & Callbacks
     extend  Resource
     include Includes
     include Instance
     include Fields
-
-    # Relationships
-    include Restly::Associations
-    include Restly::EmbeddedAssociations
 
     # Set up the Attributes
     thread_local_accessor :current_token
