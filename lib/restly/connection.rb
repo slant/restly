@@ -64,7 +64,7 @@ class Restly::Connection < OAuth2::AccessToken
   alias_method :forced_request, :request
 
   def request(verb, path, opts={}, &block)
-    path = [base_path, path.gsub(/^\/?/, '')].join('/')
+    path = [base_path.gsub(/\/?$/, ''), path.gsub(/^\/?/, '')].join('/')
 
     if cache && !opts[:force]
       request_log("Restly::CacheRequest", path, verb) do

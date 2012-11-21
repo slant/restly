@@ -1,4 +1,7 @@
 module Restly::Associations
+
+  ATTR_MATCHER = /(?<attr>\w+)(?<setter>=)?$/
+
   extend ActiveSupport::Concern
   extend ActiveSupport::Autoload
 
@@ -46,7 +49,7 @@ module Restly::Associations
   end
 
   def respond_to_association?(m)
-    !!(/(?<attr>\w+)(?<setter>=)?$/ =~ m.to_s) && associations.include?(attr.to_sym)
+    (matched = ATTR_MATCHER.match m) && associations.include?(matched[:attr].to_sym)
   end
 
   def respond_to?(m, include_private = false)
@@ -85,9 +88,8 @@ module Restly::Associations
   end
 
   def association_missing(m, *args)
-    if !!(/(?<attr>\w+)(?<setter>=)?$/ =~ m.to_s) && respond_to_association?(m)
-      attr = attr.to_sym
-      case !!setter
+    if (matched = ATTR_MATCHER.match m) && associations.include?(attr = matched[:attr].to_sym)
+      case !!matched[:setter]
         when true
           set_association(attr, *args)
         when false

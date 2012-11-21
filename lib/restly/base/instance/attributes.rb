@@ -1,5 +1,7 @@
 module Restly::Base::Instance::Attributes
 
+  ATTR_MATCHER = /(?<attr>\w+)(?<setter>=)?$/
+
   def update_attributes(attributes)
     self.attributes = attributes
     save
@@ -35,7 +37,7 @@ module Restly::Base::Instance::Attributes
   end
 
   def respond_to_attribute?(m)
-    !!(/(?<attr>\w+)(?<setter>=)?$/ =~ m.to_s) && fields.include?(attr)
+    (matched = ATTR_MATCHER.match m) && fields.include?(matched[:attr])
   end
 
   def respond_to?(m, include_private = false)
@@ -56,8 +58,8 @@ module Restly::Base::Instance::Attributes
   private
 
   def attribute_missing(m, *args)
-    if !!(/(?<attr>\w+)(?<setter>=)?$/ =~ m.to_s) && fields.include?(attr)
-      case !!setter
+    if (matched = ATTR_MATCHER.match m) && fields.include?(attr = matched[:attr].to_sym)
+      case !!matched[:setter]
         when true
           write_attribute(attr, *args)
         when false
@@ -76,8 +78,8 @@ module Restly::Base::Instance::Attributes
 
   def write_attribute(attr, val)
     if fields.include?(attr)
-      send("#{attr}_will_change!".to_sym) unless val == @attributes[attr.to_sym] || !@loaded
-      @attributes[attr.to_sym] = Attribute.new(val)
+      p ":#{attr} is changing!" and send("#{attr}_will_change!") if val != read_attribute(attr) && loaded?
+      @attributes[attr.to_sym] = val
 
     else
       ActiveSupport::Notifications.instrument("missing_attribute.restly", attr: attr)
@@ -86,7 +88,12 @@ module Restly::Base::Instance::Attributes
 
   def read_attribute(attr, options={})
     options.reverse_merge!({ autoload: true })
-    load! if (key = attr.to_sym) != :id && @attributes[key].nil? && !!options[:autoload] && !loaded? && !exists?
+
+    # Try and get the attribute if the item is not loaded
+    if initialized? && attr.to_sym != :id && @attributes[attr].nil? && !!options[:autoload] && !loaded? && exists?
+      load!
+    end
+
     @attributes[attr.to_sym]
   end
 
@@ -101,39 +108,6 @@ module Restly::Base::Instance::Attributes
 
   def set_attributes_from_response(response=self.response)
     self.attributes = parsed_response(response)
-  end
-
-  class Attribute < Restly::Proxies::Base
-
-    def initialize(attr)
-      @attr = attr
-      case @attr
-        when String
-          type_convert_string
-        end
-      super(@attr)
-    end
-
-    private
-
-    def type_convert_string
-      time =    (@attr.to_time rescue nil)
-      date =    (@attr.to_date rescue nil)
-      # int  =    (@attr.to_i    rescue nil)
-      # flt  =    (@attr.to_f    rescue nil)
-      @attr = if time.try(:iso8601) == @attr
-                time
-              elsif date.try(:to_s) == @attr
-                date
-              #elsif int.try (:to_s) == @attr
-              #  int
-              #elsif flt.try (:to_s) == @attr
-              #  flt
-              else
-                @attr
-      end
-    end
-
   end
 
 end
