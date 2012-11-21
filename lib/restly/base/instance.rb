@@ -39,8 +39,8 @@ module Restly::Base::Instance
 
         @readonly = options[:readonly] || false
         set_response options[:response] if options[:response]
-        @loaded = options.has_key?(:loaded) ? options[:loaded] : true
         self.attributes = attributes if attributes
+        @loaded = options.has_key?(:loaded) ? options[:loaded] : true
         self.connection = options[:connection] if options[:connection].is_a?(OAuth2::AccessToken)
 
       end
