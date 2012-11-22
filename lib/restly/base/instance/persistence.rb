@@ -25,13 +25,20 @@ module Restly::Base::Instance::Persistence
   end
 
   def reload!
-    return unless initialized?
+    return unless initialized? && loaded?
     raise Restly::Error::MissingId, "Cannot reload #{resource_name}, either it hasn't been created or it is missing an ID." unless exists?
-    set_attributes_from_response connection.get(path_with_format, force: true)
     @loaded = true
+    set_attributes_from_response connection.get(path_with_format, force: true)
     self
   end
 
-  alias :load! :reload!
+  def load!
+    return unless initialized? && loaded?
+    raise Restly::Error::MissingId, "Cannot load #{resource_name}, either it hasn't been created or it is missing an ID." unless exists?
+    @loaded = true
+    set_attributes_from_response connection.get(path_with_format)
+    self
+  end
+
 
 end

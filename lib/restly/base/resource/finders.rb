@@ -1,5 +1,7 @@
 module Restly::Base::Resource::Finders
 
+  Collection = Restly::Collection
+
   def find(id, *args)
     options = args.extract_options!
 
@@ -18,7 +20,7 @@ module Restly::Base::Resource::Finders
 
   def collection_from_response(response)
     raise Restly::Error::InvalidResponse unless response.is_a? OAuth2::Response
-    Restly::Collection.new resource, nil, response: response
+    Collection.new resource, nil, response: response
   end
 
   def instance_from_response(response)

@@ -7,6 +7,7 @@ class Restly::Collection < Array
   include Restly::Base::Resource::BatchActions
   include Restly::Base::GenericMethods
   include ErrorHandling
+  include Pagination
 
   delegate :resource_name, :new, :client, to: :resource
 
@@ -45,14 +46,6 @@ class Restly::Collection < Array
   end
 
   alias :collect :map
-
-  #def paginate(opts={})
-  #  @pagination_opts = opts
-  #  collection = self.dup
-  #  collection.extend(Restly::Collection::Pagination)
-  #  return page(opts[:page]) unless opts[:page] == current_page && opts[:per_page] == response_per_page
-  #  collection
-  #end
 
   def <<(instance)
     raise Restly::Error::InvalidObject, "Object is not an instance of #{resource}" unless accepts?(instance)

@@ -8,6 +8,7 @@ module Restly
     autoload :Includes
     autoload :Fields
     autoload :EmbeddedAssociations
+    autoload :PaginationOptions
 
     # Thread Local Accessor
     extend Restly::ThreadLocal
@@ -41,6 +42,9 @@ module Restly
     include Includes
     include Instance
     include Fields
+
+    # Pagination Options
+    include PaginationOptions
 
     # Set up the Attributes
     thread_local_accessor :current_token

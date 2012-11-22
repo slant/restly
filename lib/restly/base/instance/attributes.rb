@@ -79,8 +79,7 @@ module Restly::Base::Instance::Attributes
   def write_attribute(attr, val)
     if fields.include?(attr)
       send("#{attr}_will_change!") if val != read_attribute(attr) && loaded?
-      @attributes[attr.to_sym] = val
-
+      @attributes[attr.to_sym] = convert_attr_type(val)
     else
       ActiveSupport::Notifications.instrument("missing_attribute.restly", attr: attr)
     end
@@ -90,7 +89,7 @@ module Restly::Base::Instance::Attributes
     options.reverse_merge!({ autoload: true })
 
     # Try and get the attribute if the item is not loaded
-    if initialized? && attr.to_sym != :id && @attributes[attr].nil? && !!options[:autoload] && !loaded? && exists?
+    if initialized? && attr.to_sym != :id && attribute_not_loaded?(attr) && !!options[:autoload] && !loaded? && exists?
       load!
     end
 
@@ -108,6 +107,26 @@ module Restly::Base::Instance::Attributes
 
   def set_attributes_from_response(response=self.response)
     self.attributes = parsed_response(response)
+  end
+
+  def attribute_loaded?(attr)
+    @attributes.has_key? attr
+  end
+
+  def attribute_not_loaded?(attr)
+    !attribute_loaded?(attr)
+  end
+
+  def convert_attr_type(val)
+    time = (val.to_time rescue nil)
+    date = (val.to_date rescue nil)
+    if time.try(:iso8601) == val
+      time
+    elsif date.try(:to_s) == val
+      date
+    else
+      val
+    end
   end
 
 end

@@ -121,7 +121,11 @@ class Restly::Connection < OAuth2::AccessToken
 
     cache_log("Restly::CacheExpire", cache_key, :yellow) { Rails.cache.delete(cache_key) } if response.error
 
-    raise Restly::Error::ConnectionError, "#{response.status}: #{status_string(response.status)}" if response.status >= 500
+    if response.status >= 500
+      site = URI.parse(client.site)
+      formatted_path = ["#{site.scheme}://#{site.host}", "#{site.port}", path].join
+      raise Restly::Error::ConnectionError, "#{response.status}: #{status_string(response.status)}\nurl: #{formatted_path}"
+    end
 
     # Return the response
     response
@@ -130,7 +134,7 @@ class Restly::Connection < OAuth2::AccessToken
 
   def request_log(name, path, verb, color=:light_green, &block)
     site = URI.parse(client.site)
-    formatted_path = ["#{site.scheme}://#{site.host}", path].join("/")
+    formatted_path = ["#{site.scheme}://#{site.host}", ":#{site.port}", path].join
     ActiveSupport::Notifications.instrument("request.restly", url: formatted_path, method: verb, name: name, color: color, &block)
   end
 
