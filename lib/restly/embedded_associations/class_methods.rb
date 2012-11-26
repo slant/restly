@@ -4,7 +4,7 @@ module Restly::EmbeddedAssociations::ClassMethods
 
   # Embeds One
   def embeds_resource(name, options = {})
-    exclude_field(name) if ancestors.include?(Restly::Base)
+    exclude_field(name)
     self.resource_associations[name] = association = Restly::EmbeddedAssociations::EmbedsOne.new(self, name, options)
 
     define_method name do |options={}|
@@ -20,7 +20,7 @@ module Restly::EmbeddedAssociations::ClassMethods
 
   # Embeds Many
   def embeds_resources(name, options = {})
-    exclude_field(name) if ancestors.include?(Restly::Base)
+    exclude_field(name)
     self.resource_associations[name] = association = Restly::EmbeddedAssociations::EmbedsMany.new(self, name, options)
 
     define_method name do |options={}|
@@ -43,6 +43,13 @@ module Restly::EmbeddedAssociations::ClassMethods
     define_method "#{name}=" do |value|
       set_association name, value
     end
+
+    [:save, :delete, :destroy].each do |method|
+      define_method method do
+        raise NotImplemented, "Embedded actions have not been implemented."
+      end
+    end
+
   end
 
 end
