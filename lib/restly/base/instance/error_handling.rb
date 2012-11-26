@@ -1,6 +1,14 @@
 module Restly::Base::Instance::ErrorHandling
   extend ActiveSupport::Concern
 
+  def append_error(field, error)
+    self.errors.add field.to_sym, error
+    if /(?<association>\w+)\.(?<attr>.+)/ =~ field && respond_to_association?(association)
+      instance_eval(&association.to_sym).append_error(attr, error)
+    end
+
+  end
+
   private
 
   def response_has_errors?(response=self.response)
@@ -20,21 +28,23 @@ module Restly::Base::Instance::ErrorHandling
           case error
 
             when Array
-              error.each { |e| self.errors.add(name.to_sym, e) }
+              error.each { |e| append_error name, e }
 
             when String
-              self.errors.add(name.to_sym, error)
+              append_error name, error
 
           end
+
         end
 
       when Array
-        response_errors.each do |error|
-          self.errors.add(:base, error)
-        end
+        response_errors.each { |error| append_error :base, error }
 
       when String
-        self.errors.add(:base, response_errors)
+        append_error :base, response_errors
+
+      when NilClass
+        append_error :base, connection.status_string(response.status)
 
     end
 

@@ -4,7 +4,7 @@ module Restly::Base::Instance::Persistence
     return false unless id
 
     begin
-      @response ||= connection.get(path, force: true)
+      @response = connection.get(path, force: true) unless @response.status.to_i < 400
 
     rescue OAuth2::Error => e
       @response = e.response
@@ -12,7 +12,7 @@ module Restly::Base::Instance::Persistence
     end
 
     status = @response.status.to_i
-    status < 300 && status >= 200
+    status < 400 && status >= 200
 
   end
 
