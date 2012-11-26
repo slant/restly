@@ -61,10 +61,15 @@ class Restly::Connection < OAuth2::AccessToken
     }
   end
 
+  def status_string(int)
+    Rack::Utils::HTTP_STATUS_CODES[int.to_i]
+  end
+
   alias_method :forced_request, :request
 
   def request(verb, path, opts={}, &block)
-    path = [base_path.gsub(/\/?$/, ''), path.gsub(/^\/?/, '')].join('/')
+
+    path = [base_path.gsub(/\/?$/, ''), path.gsub(/^\/?/, '')].join('/') unless /#{base_path}/.match path
 
     if cache && !opts[:force]
       request_log("Restly::CacheRequest", path, verb) do
@@ -76,6 +81,8 @@ class Restly::Connection < OAuth2::AccessToken
       end
     end
   end
+
+  private
 
   def id_from_path(path)
     capture = path.match /(?<id>[0-9])\.\w*$/
@@ -123,7 +130,7 @@ class Restly::Connection < OAuth2::AccessToken
 
     if response.status >= 500
       site = URI.parse(client.site)
-      formatted_path = ["#{site.scheme}://#{site.host}", "#{site.port}", path].join
+      formatted_path = ["#{site.scheme}://#{site.host}", ":#{site.port}", path].join
       raise Restly::Error::ConnectionError, "#{response.status}: #{status_string(response.status)}\nurl: #{formatted_path}"
     end
 
@@ -140,10 +147,6 @@ class Restly::Connection < OAuth2::AccessToken
 
   def cache_log(name, key, color=:light_green, &block)
     ActiveSupport::Notifications.instrument("cache.restly", key: key, name: name, color: color, &block)
-  end
-
-  def status_string(int)
-    Rack::Utils::HTTP_STATUS_CODES[int.to_i]
   end
 
 end
