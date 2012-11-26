@@ -21,6 +21,10 @@ module Restly::NestedAttributes
 
   end
 
+  def respond_to?(m, include_private = false)
+    respond_to_nested_attributes?(m) || super
+  end
+
   private
 
   # One To One Association
@@ -112,10 +116,6 @@ module Restly::NestedAttributes
 
   def respond_to_nested_attributes?(m)
     (matched = ATTR_MATCHER.match m) && resource_nested_attributes_options.has_key?(matched[:attr].to_sym)
-  end
-
-  def respond_to?(m, include_private = false)
-    respond_to_nested_attributes?(m) || super
   end
 
   module ClassMethods
