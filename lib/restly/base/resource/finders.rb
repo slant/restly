@@ -24,6 +24,7 @@ module Restly::Base::Resource::Finders
   end
 
   def instance_from_response(response)
+    raise Restly::Error::RecordNotFound, "Could not find a #{name} at the specified path." unless response.status < 400
     new(nil, response: response, connection: connection)
   end
 

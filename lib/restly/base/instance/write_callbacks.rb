@@ -2,47 +2,63 @@ module Restly::Base::Instance::WriteCallbacks
   extend ActiveSupport::Concern
 
   included do
-    before_save :format_request
+    extend ClassMethods
+
+    class_attribute :request_builders
+    self.request_builders = []
+
+    build_request :attributes
+
   end
 
-  private
+  def formatted_for_request
 
-  def format_request
-    @request_body = case format.to_sym
-                      when :json
-                        savable_resource.to_json
-                      when :xml
-                        savable_resource.to_xml
-                      else
-                        savable_resource.to_param
-                    end
-  end
+    case format.to_sym
+      when :json
+        built_for_request.to_json
 
-  def savable_resource
-    {resource_name => attributes_with_present_values(writable_attributes)}
-  end
+      when :xml
+        built_for_request.to_xml
 
-  def attributes_with_present_values(attributes=self.attributes)
-    attributes.as_json.reduce({}) do |hash, (key, val)|
-      if val.is_a?(Hash)
-        hash[key] = attributes_with_present_values(val)
-      elsif val.present? && key.to_sym != :id
-        hash[key] = val
-      end
-      hash
+      else
+        built_for_request.to_param
+
     end
+
   end
 
-  def writable_attributes(attributes=self.attributes)
+  def built_for_request(resource_key=resource_name)
+
+    attributes = request_builders.reduce(HashWithIndifferentAccess.new) do |attributes, builder|
+      attributes.merge! builder.is_a?(Symbol) ? send(builder) : instance_eval(&builder)
+    end
+
     maa = mass_assignment_authorizer(:default)
 
     if maa.is_a? ActiveModel::MassAssignmentSecurity::BlackList
-      attributes.reject{ |key, val| maa.map(&:to_sym).include?(key.to_sym) }
+      attributes.except! *maa.map(&:to_sym)
 
     elsif maa.is_a? ActiveModel::MassAssignmentSecurity::WhiteList
-      attributes.select{ |key, val| maa.map(&:to_sym).include?(key.to_sym) }
+      attributes.slice! *maa.map(&:to_sym)
 
     end
+
+    if resource_key
+      { resource_key.to_sym => attributes.select { |k,v| v.present? } }
+    else
+      attributes.select { |k,v| v.present? }
+    end
+
+  end
+
+  module ClassMethods
+
+    private
+
+    def build_request(symbol=nil, &block)
+      self.request_builders << symbol || block
+    end
+
   end
 
 
