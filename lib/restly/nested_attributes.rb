@@ -6,10 +6,17 @@ module Restly::NestedAttributes
 
   included do
     class_attribute :resource_nested_attributes_options, :instance_writer => false
-    self.resource_nested_attributes_options = {}
+    self.resource_nested_attributes_options = HashWithIndifferentAccess.new
 
     inherited do
       self.resource_nested_attributes_options = resource_nested_attributes_options.dup
+    end
+
+    if ancestors.include?(Restly::Base)
+      include Restly::Base::Instance::WriteCallbacks
+      build_request :nested_attributes_for_request
+    else
+      before_save :save_nested_attributes_associations
     end
 
   end
@@ -17,12 +24,10 @@ module Restly::NestedAttributes
   private
 
   # One To One Association
-  def assign_nested_attributes_for_one_to_one_resource_association( association_name, attributes )
+  def assign_nested_attributes_for_one_to_one_resource_association( association_name, attributes={} )
 
-    association_attributes[association_name] = attributes.delete("#{association_name}_attributes") || {}
-    associated_instance = send(association_name) ||
-      self.class.reflect_on_resource_association(association_name).build(self)
-    associated_instance.attributes = association_attributes
+    associated_instance = send(association_name) || self.class.reflect_on_resource_association(association_name).build(self)
+    associated_instance.attributes = attributes
 
   end
 
@@ -57,12 +62,37 @@ module Restly::NestedAttributes
 
   end
 
-  def set_nested_attributes_for_save
-    @attributes = @attributes.reduce(HashWithIndifferentAccess.new) do |hash, (key, v)|
-      options = resource_nested_attributes_options[key.to_sym]
-      key = [ options[:write_prefix], key, options[:write_suffix] ].compact.join('_') if options.present?
-      hash[key] = v
+  def nested_attributes_for_request
+    resource_nested_attributes_options.reduce(HashWithIndifferentAccess.new) do |hash, (association_name, options)|
+      association = self.class.reflect_on_resource_association association_name.to_sym
+      next unless association.options[:autosave]
+
+      associated_object = instance_eval(&association_name.to_sym)
+      built_for_request = if associated_object.is_a? Array
+                            associated_object.map { |instance| instance.built_for_request(nil) if instance.changed? }.compact
+                          else
+                            associated_object.built_for_request(nil) if associated_object.changed?
+                          end
+
+      key = [ options[:write_prefix], association_name, options[:write_suffix] ].compact.join('_')
+      hash[key] = built_for_request if built_for_request.present?
       hash
+    end
+  end
+
+  def save_nested_attributes_associations
+    resource_nested_attributes_options.each do |association_name, options|
+      association = self.class.reflect_on_resource_association association_name.to_sym
+      next unless association.options[:autosave]
+
+      associated_object = instance_eval(&association_name.to_sym)
+      if associated_object.is_a? Array
+        associated_object.each do |instance|
+          instance.save && instance.changed?
+        end
+      else
+        associated_object.save if associated_object.changed?
+      end
     end
   end
 
@@ -80,6 +110,14 @@ module Restly::NestedAttributes
     super
   end
 
+  def respond_to_nested_attributes?(m)
+    (matched = ATTR_MATCHER.match m) && resource_nested_attributes_options.has_key?(matched[:attr].to_sym)
+  end
+
+  def respond_to?(m, include_private = false)
+    respond_to_nested_attributes?(m) || super
+  end
+
   module ClassMethods
     REJECT_ALL_BLANK_PROC = proc { |attributes| attributes.all? { |key, value| key == '_destroy' || value.blank? } }
 
@@ -88,8 +126,6 @@ module Restly::NestedAttributes
       options.update(attr_names.extract_options!)
       options.assert_valid_keys(:allow_destroy, :reject_if, :limit, :update_only, :write_prefix, :write_suffix)
       options[:reject_if] = REJECT_ALL_BLANK_PROC if options[:reject_if] == :all_blank
-
-      before_save :set_nested_attributes_for_save
 
       attr_names.each do |association_name|
 
