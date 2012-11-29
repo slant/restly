@@ -31,7 +31,7 @@ module Restly::Associations::Base::Loaders
                  return nil unless foreign_key
                  association_class.find(foreign_key)
                else
-                 association_class.instance_from_response association_class.connection.get(association_class.path)
+                 association_class.instance_from_response association_class.connection.get(association_class.path_with_format)
                end
     Restly::Proxies::Associations::Instance.new(instance, parent)
   end
