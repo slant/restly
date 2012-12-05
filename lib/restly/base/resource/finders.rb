@@ -3,7 +3,7 @@ module Restly::Base::Resource::Finders
   Collection = Restly::Collection
 
   def find(finder, *args)
-    finder = nil unless self.class.finder.in? fields
+    finder = nil unless self.finder.in? fields
     options = args.extract_options!
     instance_from_response connection.get(path_with_format(finder), params: params)
   end
