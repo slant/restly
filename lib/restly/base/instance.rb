@@ -71,9 +71,10 @@ module Restly::Base::Instance
   end
 
   def path
-    return @path if @path
-    if response && response.response.env[:url]
-      response.response.env[:url].path.gsub(/\.\w+$/,'')
+    if @path
+      @path
+    elsif path_from_response
+      path_from_response
     elsif respond_to?(:id) && id
       [self.class.path, id].join('/')
     else
@@ -97,6 +98,11 @@ module Restly::Base::Instance
         set_attributes_from_response
       end
     end
+  end
+
+  def path_from_response
+    return nil unless response
+    response.response.env[:url].path.gsub(/\.\w+$/,'')
   end
 
   def parsed_response(response=self.response)
