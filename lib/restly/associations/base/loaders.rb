@@ -26,14 +26,16 @@ module Restly::Associations::Base::Loaders
   def load_instance(parent, association_class = self.association_class)
     raise Restly::Error::AssociationError, "Not an instance" if collection?
     return nil if embedded?
-    instance = if parent.attributes.has_key? "#{name}_id"
-                 foreign_key = parent.attributes["#{name}_id"]
-                 return nil unless foreign_key
-                 association_class.find(foreign_key)
+    foreign_key = options[:foreign_key] || "#{name}_id"
+    instance = if parent.attributes.has_key? foreign_key
+                 id = parent.attributes[foreign_key]
+                 return nil unless id
+                 association_class.find(id)
                else
                  association_class.instance_from_response association_class.connection.get(association_class.path_with_format)
                end
     Restly::Proxies::Associations::Instance.new(instance, parent)
   end
+
 
 end
