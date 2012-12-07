@@ -25,6 +25,7 @@ module Restly::Base::Includes
     end
 
     def find_by(field)
+      raise Restly::Error::InvalidField, "#{field} was not a valid field." unless field.in? fields
       self.finder = field
     end
 
