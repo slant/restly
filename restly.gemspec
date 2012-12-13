@@ -6,8 +6,8 @@ require 'restly/version'
 Gem::Specification.new do |gem|
   gem.name          = "restly"
   gem.version       = Restly::VERSION
-  gem.authors       = ["Jason Waldrip"]
-  gem.email         = ["jason@waldrip.net"]
+  gem.authors       = ["Jason Waldrip", "Delynn Berry", "Ryan Cross", "Mike Zelem"]
+  gem.email         = ["jason@waldrip.net", "delynn@gmail.com", "rcross@cylence.com", "mzelem@healthagen.net"]
   gem.description   = %q{ An ODM for a RESTful service }
   gem.summary       = %q{ Restly incorporates a ActiveModel based ODM for your REST based service. Think of Restly as a Re-imagination of Rails' ActiveResource }
   gem.homepage      = "http://github.com/jwaldrip/restly"
