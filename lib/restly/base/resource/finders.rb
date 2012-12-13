@@ -2,11 +2,10 @@ module Restly::Base::Resource::Finders
 
   Collection = Restly::Collection
 
-  def find(id, *args)
+  def find(finder, *args)
+    finder = nil unless self.finder.in? fields
     options = args.extract_options!
-
-    #params[pagination_options[:params][:page]] = options[:page] if pagination
-    instance_from_response connection.get(path_with_format(id), params: params)
+    instance_from_response connection.get(path_with_format(finder), params: params)
   end
 
   def all

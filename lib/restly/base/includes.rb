@@ -2,7 +2,7 @@ module Restly::Base::Includes
   extend ActiveSupport::Concern
 
   included do
-    class_attribute :current_specification, instance_writer: false
+    class_attribute :finder, :current_specification, instance_writer: false
   end
 
   module ClassMethods
@@ -22,6 +22,11 @@ module Restly::Base::Includes
       @client = client
       @client.resource = self
       @client
+    end
+
+    def find_by(field)
+      raise Restly::Error::InvalidField, "#{field} was not a valid field." unless field.in? fields
+      self.finder = field
     end
 
     def has_specification

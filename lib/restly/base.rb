@@ -66,6 +66,7 @@ module Restly
     # Set Defaults on Inheritance
     inherited do
       field :id
+      find_by :id
       self.resource_name      = name.gsub(/.*::/,'').underscore if name.present?
       self.path               = resource_name.pluralize
       self.params             = params.dup

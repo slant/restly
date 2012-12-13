@@ -1,7 +1,7 @@
 module Restly::Base::Instance::Persistence
 
   def exists?
-    return false unless id
+    return false unless id || path_from_response
 
     begin
       @response = connection.get(path, force: true) unless @response.status.to_i < 400

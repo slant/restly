@@ -46,7 +46,7 @@ module Restly::Base::Fields
     end
 
     def include?(value)
-      super(value.to_sym) || super(value.to_s)
+      super(value.try :to_sym) || super(value.try :to_s)
     end
 
     def <<(value)

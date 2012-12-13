@@ -45,7 +45,7 @@ module Restly::NestedAttributes
 
     if attributes_collection.is_a? Hash
       keys = attributes_collection.keys
-      attributes_collection = if keys.include?('id') || keys.include?(:id)
+      attributes_collection = if keys.include?(self.finder.try(:to_s)) || keys.include?(self.finder.try(:to_sym))
                                 Array.wrap(attributes_collection)
                               else
                                 attributes_collection.values
@@ -57,9 +57,9 @@ module Restly::NestedAttributes
 
     attributes_collection.each do |attributes|
       attributes = attributes.with_indifferent_access
-      if attributes[:id].blank?
-        send(association_name) << association.build(self, attributes.except(:id))
-      elsif (existing_record = existing_records.find{ |record| record.id.to_s == attributes['id'].to_s })
+      if attributes[self.finder].blank?
+        send(association_name) << association.build(self, attributes.except(self.finder))
+      elsif (existing_record = existing_records.find{ |record| record.id.to_s == attributes[self.finder].to_s })
         existing_record.attributes = attributes
       end
     end
