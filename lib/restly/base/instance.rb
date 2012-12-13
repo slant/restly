@@ -76,7 +76,7 @@ module Restly::Base::Instance
     elsif path_from_response
       path_from_response
     elsif send self.finder
-      [self.class.path, send self.finder].join('/')
+      [self.class.path, send(self.finder)].join('/')
     else
       self.class.path
     end
