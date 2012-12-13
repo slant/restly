@@ -101,8 +101,9 @@ module Restly::Base::Instance
   end
 
   def path_from_response
-    return nil unless response
     response.response.env[:url].try(:path).try(:gsub, /\.\w+$/,'')
+  rescue
+    nil
   end
 
   def parsed_response(response=self.response)
