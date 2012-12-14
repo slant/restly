@@ -13,6 +13,7 @@ module Restly::Error
     InvalidAttribute
     InvalidNestedAttribute
     AssociationError
+    Unauthorized
   }
 
   errors.each do |error|
